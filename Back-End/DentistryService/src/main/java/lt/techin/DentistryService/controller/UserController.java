@@ -2,7 +2,9 @@ package lt.techin.DentistryService.controller;
 
 import lt.techin.DentistryService.dto.login.LoginResponseDTO;
 import lt.techin.DentistryService.dto.userClient.UserClientMapper;
+import lt.techin.DentistryService.dto.userProvider.UserProviderMapper;
 import lt.techin.DentistryService.model.UserClient;
+import lt.techin.DentistryService.model.UserProvider;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,5 +20,12 @@ public class UserController {
     UserClient userClient = (UserClient) authentication.getPrincipal();
 
     return ResponseEntity.ok(UserClientMapper.toLoginClientResponseDTO(userClient));
+  }
+
+  @GetMapping("login/provider")
+  public ResponseEntity<LoginResponseDTO> provider(Authentication authentication) {
+    UserProvider userProvider = (UserProvider) authentication.getPrincipal();
+
+    return ResponseEntity.ok(UserProviderMapper.toLoginProviderResponseDTO(userProvider));
   }
 }
