@@ -1,5 +1,7 @@
 package lt.techin.DentistryService.dto.userProvider;
 
+import lt.techin.DentistryService.dto.login.LoginResponseDTO;
+import lt.techin.DentistryService.model.Role;
 import lt.techin.DentistryService.model.UserProvider;
 
 import java.util.List;
@@ -39,5 +41,15 @@ public class UserProviderMapper {
                     u.getUsername(),
                     u.getRoles()))
             .toList();
+  }
+
+  public static LoginResponseDTO toLoginProviderResponseDTO(UserProvider userProvider) {
+    return new LoginResponseDTO(
+            userProvider.getUsername(),
+            userProvider.getRoles()
+                    .stream()
+                    .map(Role::getName)
+                    .toList()
+    );
   }
 }
