@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { Link } from "react-router";
 
-const LoginClientPage = () => {
+const LoginProviderPage = () => {
   const {
     register,
     handleSubmit,
@@ -21,7 +21,7 @@ const LoginClientPage = () => {
     setLogIn(true);
     setError("");
     try {
-      await loginClient(data.username, data.password);
+      await loginProvider(data.username, data.password);
       reset();
       // navigate("/");
     } catch (err) {
@@ -118,4 +118,4 @@ const LoginClientPage = () => {
   );
 };
 
-export default LoginClientPage;
+export default LoginProviderPage;
