@@ -21,7 +21,7 @@ const LoginProviderPage = () => {
     setLogIn(true);
     setError("");
     try {
-      await loginProvider(data.username, data.password);
+      await login(data.username, data.password, "login/provider");
       reset();
       // navigate("/");
     } catch (err) {
@@ -36,7 +36,7 @@ const LoginProviderPage = () => {
       <div className="flex min-h-full flex-col justify-center  h-screen">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">
-            Login
+            Login as provider
           </h2>
         </div>
 
