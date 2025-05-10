@@ -20,4 +20,12 @@ public class UserProviderService {
   public Optional<UserProvider> findByUsername(String username) {
     return userProviderRepository.findByUsername(username);
   }
+
+  public boolean existUserByUserName(String name) {
+    return this.userProviderRepository.existByUserName(name);
+  }
+
+  public UserProvider saveUserProvider(UserProvider userProvider) {
+    return this.userProviderRepository.save(userProvider);
+  }
 }
