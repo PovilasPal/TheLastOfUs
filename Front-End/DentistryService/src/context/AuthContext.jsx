@@ -53,10 +53,10 @@ export const AuthProvider = ({ children }) => {
         navigate("/");
     };
 
-    const registerUser = async (username, password) => {
-        await api.post("auth/register", { username, password });
-        navigate("/login");
-    };
+    // const registerUser = async (username, password) => {
+    //     await api.post("/register", { username, password });
+    //     navigate("/login");
+    // };
 
     const logout = () => {
         setUser(null);
