@@ -1,8 +1,10 @@
 package lt.techin.DentistryService.service;
 
+import jakarta.validation.constraints.NotNull;
 import lt.techin.DentistryService.model.UserProvider;
 import lt.techin.DentistryService.repository.UserProviderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -21,11 +23,16 @@ public class UserProviderService {
     return userProviderRepository.findByUsername(username);
   }
 
-  public boolean existUserByUserName(String name) {
-    return this.userProviderRepository.existByUserName(name);
+  public UserProvider saveUserProvider(UserProvider userProvider) {
+    if (userProviderRepository.existsByUsername(userProvider.getUsername())) {
+      throw new DuplicateKeyException("Username already exists");
+    }
+    return userProviderRepository.save(userProvider);
   }
 
-  public UserProvider saveUserProvider(UserProvider userProvider) {
-    return this.userProviderRepository.save(userProvider);
+  public boolean existsByname(@NotNull String name) {
+    return this.userProviderRepository.existsByname(name);
   }
+
 }
+
