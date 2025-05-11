@@ -11,5 +11,5 @@ public interface UserProviderRepository extends JpaRepository<UserProvider, Stri
 
   boolean existsByUsername(String username);
 
-  boolean existsByname(String name);
+  boolean existsByName(String name);
 }

@@ -24,14 +24,15 @@ public class UserProviderService {
   }
 
   public UserProvider saveUserProvider(UserProvider userProvider) {
+
     if (userProviderRepository.existsByUsername(userProvider.getUsername())) {
       throw new DuplicateKeyException("Username already exists");
     }
     return userProviderRepository.save(userProvider);
   }
 
-  public boolean existsByname(@NotNull String name) {
-    return this.userProviderRepository.existsByname(name);
+  public boolean existsByName(@NotNull String name) {
+    return this.userProviderRepository.existsByName(name);
   }
 
 }
