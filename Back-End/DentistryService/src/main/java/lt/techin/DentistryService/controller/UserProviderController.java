@@ -8,6 +8,7 @@ import lt.techin.DentistryService.model.UserProvider;
 import lt.techin.DentistryService.service.UserProviderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -19,6 +20,8 @@ import java.util.Map;
 @RequestMapping("/api")
 public class UserProviderController {
   private final UserProviderService userProviderService;
+  @Autowired
+  private PasswordEncoder passwordEncoder;
 
   @Autowired
   public UserProviderController(UserProviderService userProviderService) {
@@ -65,8 +68,12 @@ public class UserProviderController {
 
       return ResponseEntity.badRequest().body(response);
     }
-    UserProvider savedUserProvider = this.userProviderService.saveUserProvider(
-            UserProviderMapper.toUserProvider(userProviderRequestDTO));
+    UserProvider userProvider = UserProviderMapper.toUserProvider(userProviderRequestDTO);
+
+    String encodedPassword = passwordEncoder.encode(userProvider.getPassword());
+    userProvider.setPassword(encodedPassword);
+
+    UserProvider savedUserProvider = this.userProviderService.saveUserProvider(userProvider);
 
     return ResponseEntity.created(
                     ServletUriComponentsBuilder.fromCurrentRequest()
