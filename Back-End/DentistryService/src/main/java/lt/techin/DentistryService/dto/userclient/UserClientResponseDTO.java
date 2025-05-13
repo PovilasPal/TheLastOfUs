@@ -1,12 +1,13 @@
-package lt.techin.DentistryService.dto.userProvider;
+package lt.techin.DentistryService.dto.userclient;
 
 import lt.techin.DentistryService.model.Role;
 
 import java.util.List;
 
-public record UserProviderResponseDTO(
-        String licenceNumber,
+public record UserClientResponseDTO(
+        long id,
         String name,
+        String surname,
         String email,
         String phoneNumber,
         String username,
