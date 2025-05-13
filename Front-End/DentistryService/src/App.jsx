@@ -1,9 +1,9 @@
+import UserClientRegistrationForm from "./components/UserClientRegistrationForm"
+
 function App() {
 
   return (
-    <>
-     
-    </>
+    <UserClientRegistrationForm />
   )
 }
 
