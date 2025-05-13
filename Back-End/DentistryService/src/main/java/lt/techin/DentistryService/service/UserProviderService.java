@@ -1,6 +1,5 @@
 package lt.techin.DentistryService.service;
 
-import jakarta.validation.constraints.NotNull;
 import lt.techin.DentistryService.model.UserProvider;
 import lt.techin.DentistryService.repository.UserProviderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,8 +31,8 @@ public class UserProviderService {
     return userProviderRepository.save(userProvider);
   }
 
-  public boolean existsByName(@NotNull String name) {
-    return this.userProviderRepository.existsByName(name);
+  public boolean existsByLicenceNumber(String licenceNumber) {
+    return this.userProviderRepository.existsByLicenceNumber(licenceNumber);
   }
 
   public Optional<UserProvider> findByLicenceNumber(String licenceNumber) {

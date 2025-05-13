@@ -62,9 +62,9 @@ public class UserProviderController {
   @PostMapping("/providerRegistration")
   public ResponseEntity<Object> saveUserProvider(
           @Valid @RequestBody UserProviderRequestDTO userProviderRequestDTO) {
-    if (this.userProviderService.existsByName(userProviderRequestDTO.name())) {
+    if (this.userProviderService.existsByLicenceNumber(userProviderRequestDTO.licenceNumber())) {
       Map<String, String> response = new HashMap<>();
-      response.put("message", "Provider with this name already exists");
+      response.put("message", "Provider with this licence number already exists");
 
       return ResponseEntity.badRequest().body(response);
     }
