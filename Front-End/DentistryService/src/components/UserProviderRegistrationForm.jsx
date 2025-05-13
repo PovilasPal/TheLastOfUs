@@ -1,155 +1,218 @@
 const UserProviderRegistration = () => {
-  const [formStructure, setFormStructure] = useState(null);
-  const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(null);
-  const navigate = useNavigate();
 
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm({
-    resolver: yupResolver(userProviderSchema),
+  } = useForm();
+const [formStructure, setFormStructure] = React.useState({
+    licenceNumber: '',
+    name: '',
+    email: '',
+    phoneNumber: '',
+    username: '',
+    password: '',
+    roles: [{ id: 2, name: 'PROVIDER' }]
   });
 
-  useEffect(() => {
+  const [apiError, setApiError] = React.useState('');
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
+
+  // Fetch form structure when component mounts
+  React.useEffect(() => {
     const fetchFormStructure = async () => {
       try {
-        const response = await getRegistrationFormStructure();
+        const response = await axios.get('/api/register');
         setFormStructure(response.data);
-        reset(response.data); // Pre-fill form with default values
-      } catch (err) {
-        console.error('Error fetching form structure:', err);
+      } catch (error) {
+        console.error('Error fetching form structure:', error);
       }
     };
-
+    
     fetchFormStructure();
-  }, [reset]);
+  }, []);
 
   const onSubmit = async (data) => {
+    setIsSubmitting(true);
+    setApiError('');
+    
     try {
-      const response = await registerUserProvider(data);
-      setSuccess('Provider registered successfully!');
-      setError(null);
-      setTimeout(() => {
-        navigate('/providers');
-      }, 1500);
-    } catch (err) {
-      setError(err.response?.data?.message || 'Registration failed. Please try again.');
-      setSuccess(null);
+      const response = await axios.post('/api/providerRegistration', {
+        ...data,
+        roles: formStructure.roles // Include the roles from the form structure
+      });
+      
+      // Handle successful registration
+      console.log('Registration successful:', response.data);
+      navigate('/registration-success'); // Redirect to success page
+    } catch (error) {
+      if (error.response && error.response.data && error.response.data.message) {
+        setApiError(error.response.data.message);
+      } else {
+        setApiError('Registration failed. Please try again.');
+      }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  if (!formStructure) {
-    return <div>Loading form...</div>;
-  }
-
   return (
-    <div className="card">
-      <div className="card-header bg-primary text-white">
-        <h2>User Provider Registration</h2>
-      </div>
-      <div className="card-body">
-        {error && <div className="alert alert-danger">{error}</div>}
-        {success && <div className="alert alert-success">{success}</div>}
+    <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
+      <h2 className="text-2xl font-bold mb-6 text-center">Provider Registration</h2>
+      
+      {apiError && (
+        <div className="mb-4 p-3 bg-red-100 text-red-700 rounded">
+          {apiError}
+        </div>
+      )}
+      
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        {/* Licence Number */}
+        <div>
+          <label htmlFor="licenceNumber" className="block text-sm font-medium text-gray-700">
+            Licence Number
+          </label>
+          <input
+            id="licenceNumber"
+            type="text"
+            {...register('licenceNumber', {
+              required: 'Licence number is required',
+              pattern: {
+                value: /^[A-Z]{3}[0-9]{5}$/,
+                message: 'Licence number must be in format ABC12345 (3 uppercase letters + 5 digits)'
+              }
+            })}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
+          />
+          {errors.licenceNumber && (
+            <p className="mt-1 text-sm text-red-600">{errors.licenceNumber.message}</p>
+          )}
+        </div>
 
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="mb-3">
-            <label htmlFor="licenceNumber" className="form-label">
-              Licence Number
-            </label>
-            <input
-              type="text"
-              className={`form-control ${errors.licenceNumber ? 'is-invalid' : ''}`}
-              id="licenceNumber"
-              {...register('licenceNumber')}
-            />
-            {errors.licenceNumber && (
-              <div className="invalid-feedback">{errors.licenceNumber.message}</div>
-            )}
-          </div>
+        {/* Name */}
+        <div>
+          <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+            Full Name
+          </label>
+          <input
+            id="name"
+            type="text"
+            {...register('name', { required: 'Name is required' })}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
+          />
+          {errors.name && (
+            <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>
+          )}
+        </div>
 
-          <div className="mb-3">
-            <label htmlFor="name" className="form-label">
-              Name
-            </label>
-            <input
-              type="text"
-              className={`form-control ${errors.name ? 'is-invalid' : ''}`}
-              id="name"
-              {...register('name')}
-            />
-            {errors.name && <div className="invalid-feedback">{errors.name.message}</div>}
-          </div>
+        {/* Email */}
+        <div>
+          <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+            Email
+          </label>
+          <input
+            id="email"
+            type="email"
+            {...register('email', {
+              required: 'Email is required',
+              pattern: {
+                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                message: 'Invalid email address'
+              }
+            })}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
+          />
+          {errors.email && (
+            <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
+          )}
+        </div>
 
-          <div className="mb-3">
-            <label htmlFor="email" className="form-label">
-              Email
-            </label>
-            <input
-              type="email"
-              className={`form-control ${errors.email ? 'is-invalid' : ''}`}
-              id="email"
-              {...register('email')}
-            />
-            {errors.email && <div className="invalid-feedback">{errors.email.message}</div>}
-          </div>
+        {/* Phone Number */}
+        <div>
+          <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700">
+            Phone Number
+          </label>
+          <input
+            id="phoneNumber"
+            type="tel"
+            {...register('phoneNumber', {
+              required: 'Phone number is required',
+              pattern: {
+                value: /^\+\d{1,3}\d{9}$/,
+                message: 'Phone number must start with a country code (+ followed by 1-3 digits) and have 9 additional digits (e.g., +37012345678)'
+              }
+            })}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
+          />
+          {errors.phoneNumber && (
+            <p className="mt-1 text-sm text-red-600">{errors.phoneNumber.message}</p>
+          )}
+        </div>
 
-          <div className="mb-3">
-            <label htmlFor="phoneNumber" className="form-label">
-              Phone Number
-            </label>
-            <input
-              type="text"
-              className={`form-control ${errors.phoneNumber ? 'is-invalid' : ''}`}
-              id="phoneNumber"
-              {...register('phoneNumber')}
-            />
-            {errors.phoneNumber && (
-              <div className="invalid-feedback">{errors.phoneNumber.message}</div>
-            )}
-          </div>
+        {/* Username */}
+        <div>
+          <label htmlFor="username" className="block text-sm font-medium text-gray-700">
+            Username
+          </label>
+          <input
+            id="username"
+            type="text"
+            {...register('username', { required: 'Username is required' })}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
+          />
+          {errors.username && (
+            <p className="mt-1 text-sm text-red-600">{errors.username.message}</p>
+          )}
+        </div>
 
-          <div className="mb-3">
-            <label htmlFor="username" className="form-label">
-              Username
-            </label>
-            <input
-              type="text"
-              className={`form-control ${errors.username ? 'is-invalid' : ''}`}
-              id="username"
-              {...register('username')}
-            />
-            {errors.username && (
-              <div className="invalid-feedback">{errors.username.message}</div>
-            )}
-          </div>
+        {/* Password */}
+        <div>
+          <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+            Password
+          </label>
+          <input
+            id="password"
+            type="password"
+            {...register('password', {
+              required: 'Password is required',
+              pattern: {
+                value: /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,16}$/,
+                message: 'Password must contain one digit, one lowercase, one uppercase, one special character, and be 8-16 characters long'
+              }
+            })}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
+          />
+          {errors.password && (
+            <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
+          )}
+        </div>
 
-          <div className="mb-3">
-            <label htmlFor="password" className="form-label">
-              Password
-            </label>
-            <input
-              type="password"
-              className={`form-control ${errors.password ? 'is-invalid' : ''}`}
-              id="password"
-              {...register('password')}
-            />
-            {errors.password && (
-              <div className="invalid-feedback">{errors.password.message}</div>
-            )}
-          </div>
+        {/* Hidden roles field (since it's predefined as PROVIDER) */}
+        <input type="hidden" {...register('roles')} />
 
-          <input type="hidden" {...register('roles')} />
-
-          <button type="submit" className="btn btn-primary">
-            Register
+        <div className="flex justify-end">
+          <button
+            type="button"
+            onClick={() => reset()}
+            className="mr-3 px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300"
+            disabled={isSubmitting}
+          >
+            Reset
           </button>
-        </form>
-      </div>
+          <button
+            type="submit"
+            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-blue-300"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? 'Registering...' : 'Register'}
+          </button>
+        </div>
+      </form>
     </div>
   );
+  
 };
 
 export default UserProviderRegistration;
