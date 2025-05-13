@@ -1,13 +1,20 @@
+import React from 'react';
+import { useForm } from 'react-hook-form';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 const UserProviderRegistration = () => {
-
   const navigate = useNavigate();
   const {
     register,
     handleSubmit,
-    reset,
     formState: { errors },
+    reset,
   } = useForm();
-const [formStructure, setFormStructure] = React.useState({
+
+  const [apiError, setApiError] = React.useState('');
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
+
+const [formStructure] = React.useState({
     licenceNumber: '',
     name: '',
     email: '',
@@ -17,42 +24,36 @@ const [formStructure, setFormStructure] = React.useState({
     roles: [{ id: 2, name: 'PROVIDER' }]
   });
 
-  const [apiError, setApiError] = React.useState('');
-  const [isSubmitting, setIsSubmitting] = React.useState(false);
-
-  // Fetch form structure when component mounts
-  React.useEffect(() => {
-    const fetchFormStructure = async () => {
-      try {
-        const response = await axios.get('/api/register');
-        setFormStructure(response.data);
-      } catch (error) {
-        console.error('Error fetching form structure:', error);
-      }
-    };
-    
-    fetchFormStructure();
-  }, []);
-
+  
   const onSubmit = async (data) => {
     setIsSubmitting(true);
     setApiError('');
     
     try {
-      const response = await axios.post('/api/providerRegistration', {
-        ...data,
-        roles: formStructure.roles // Include the roles from the form structure
+      const submissionData = {...data, roles: formStructure.roles};
+
+
+      const response = await axios.post('http://localhost:8080/api/providerRegistration', submissionData, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
       });
       
       // Handle successful registration
       console.log('Registration successful:', response.data);
-      navigate('/registration-success'); // Redirect to success page
+      navigate('/registration-success'); 
     } catch (error) {
-      if (error.response && error.response.data && error.response.data.message) {
+      if (error.response) {
+      if (error.response.data && error.response.data.message) {
         setApiError(error.response.data.message);
       } else {
-        setApiError('Registration failed. Please try again.');
+        setApiError('Registration failed. Please check your inputs.');
       }
+    } else if (error.request) {
+      setApiError('Network error. Please check your internet connection.');
+    } else {
+      setApiError('An unexpected error occurred.');
+    }
     } finally {
       setIsSubmitting(false);
     }
@@ -80,7 +81,7 @@ const [formStructure, setFormStructure] = React.useState({
             {...register('licenceNumber', {
               required: 'Licence number is required',
               pattern: {
-                value: /^[A-Z]{3}[0-9]{5}$/,
+                value: /^[A-Z]{3}'\d'{5}$/,
                 message: 'Licence number must be in format ABC12345 (3 uppercase letters + 5 digits)'
               }
             })}
@@ -178,7 +179,7 @@ const [formStructure, setFormStructure] = React.useState({
             {...register('password', {
               required: 'Password is required',
               pattern: {
-                value: /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,16}$/,
+                value: /^(?=.*'\d')(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,16}$/,
                 message: 'Password must contain one digit, one lowercase, one uppercase, one special character, and be 8-16 characters long'
               }
             })}
