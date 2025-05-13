@@ -81,7 +81,7 @@ const [formStructure] = React.useState({
             {...register('licenceNumber', {
               required: 'Licence number is required',
               pattern: {
-                value: /^[A-Z]{3}'\d'{5}$/,
+                value: /^[A-Z]{3}\d{5}$/,
                 message: 'Licence number must be in format ABC12345 (3 uppercase letters + 5 digits)'
               }
             })}
@@ -179,7 +179,7 @@ const [formStructure] = React.useState({
             {...register('password', {
               required: 'Password is required',
               pattern: {
-                value: /^(?=.*'\d')(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,16}$/,
+                value: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,16}$/,
                 message: 'Password must contain one digit, one lowercase, one uppercase, one special character, and be 8-16 characters long'
               }
             })}

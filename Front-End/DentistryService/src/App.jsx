@@ -1,6 +1,5 @@
 import React from 'react'
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
-import Home from './components/Home'
+import { Route, Routes } from 'react-router-dom'
 import UserProviderRegistration from './components/UserProviderRegistrationForm'
 import Navigation from './components/Navigation'
 
@@ -8,15 +7,17 @@ import Navigation from './components/Navigation'
 function App() {
 
   return (
-    <Router>
+    <>
       <Navigation/>
+  
       <Routes>
-        <Route path="/" element={<Home/>}/>
-        <Route path="/register" element={<UserProviderRegistration/>}/>
         
+        <Route path="/register" element={<UserProviderRegistration/>}/>
+        <Route path="/registration-success" element={<h1>Registration successful</h1>}/>
+        <Route path="/*/*" element={<h1>404 Not Found</h1>}/>
       </Routes>
      
-    </Router>
+  </>
   )
 }
 
