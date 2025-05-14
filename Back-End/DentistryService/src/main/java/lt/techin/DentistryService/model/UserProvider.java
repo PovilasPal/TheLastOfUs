@@ -22,7 +22,7 @@ public class UserProvider implements UserDetails {
 
   @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(
-          name = "users_roless",
+          name = "usersp_roles",
           joinColumns = @JoinColumn(name = "user_licence_number"),
           inverseJoinColumns = @JoinColumn(name = "roles_id")
   )
