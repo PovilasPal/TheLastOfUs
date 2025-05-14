@@ -1,19 +1,15 @@
 import React from 'react'
-import { Route, Routes } from 'react-router-dom'
 import UserProviderRegistration from './components/UserProviderRegistrationForm'
 import Navigation from './components/Navigation'
 import Home from './components/Home'
-
-import UserClientRegistrationForm from "./components/UserClientRegistrationForm"
 import { Routes, Route } from "react-router";
 import LoginClientPage from "./pages/LogInClientPage";
-
+import UserClientRegistrationForm from './components/UserClientRegistrationForm';
 function App() {
 
   return (
     <>
       <Navigation/>
-  
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/register" element={<UserProviderRegistration/>}/>
