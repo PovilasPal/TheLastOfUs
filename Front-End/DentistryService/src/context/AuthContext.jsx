@@ -1,6 +1,6 @@
 import {createContext, useContext, useState} from "react";
 import { useNavigate } from "react-router";
-import api, { setAuth, clearAuth } from "../utils/api.js";
+import api, { setAuth, clearAuth } from "../api/api.js";
 
 
 const AuthContext = createContext({
