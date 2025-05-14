@@ -2,11 +2,10 @@ import React from 'react'
 import UserProviderRegistration from './components/UserProviderRegistrationForm'
 import Navigation from './components/Navigation'
 import Home from './components/Home'
-
 import UserClientRegistrationForm from "./components/UserClientRegistrationForm"
 import { Routes, Route } from "react-router";
-import LoginClientPage from "./pages/LogInClientPage";
-import UserClientRegistrationForm from './components/UserClientRegistrationForm';
+import LoginClientPage from "./components/LogInClient";
+
 function App() {
 
   return (

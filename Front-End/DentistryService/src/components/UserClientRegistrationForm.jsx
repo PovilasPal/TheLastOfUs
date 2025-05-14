@@ -1,15 +1,14 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-
+import React, { useState } from "react";
+import axios from "axios";
 
 function UserClientRegistrationForm() {
   const [formData, setFormData] = useState({
-    name: '',
-    surname: '',
-    email: '',
-    phoneNumber: '',
-    username: '',
-    password: ''
+    name: "",
+    surname: "",
+    email: "",
+    phoneNumber: "",
+    username: "",
+    password: "",
   });
 
   const [validationErrors, setValidationErrors] = useState({});
@@ -21,13 +20,15 @@ function UserClientRegistrationForm() {
     const phoneRegex = /^\+?[1-9]\d{7,20}$/;
     const passwordRegex = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=\S+$).{8,20}$/;
 
-    if (!formData.name.trim()) errors.name = 'First name is required';
-    if (!formData.surname.trim()) errors.surname = 'Last name is required';
-    if (!emailRegex.test(formData.email)) errors.email = 'Invalid email format';
-    if (!phoneRegex.test(formData.phoneNumber)) errors.phoneNumber = 'Invalid phone number';
-    if (!formData.username.trim()) errors.username = 'Username is required';
+    if (!formData.name.trim()) errors.name = "First name is required";
+    if (!formData.surname.trim()) errors.surname = "Last name is required";
+    if (!emailRegex.test(formData.email)) errors.email = "Invalid email format";
+    if (!phoneRegex.test(formData.phoneNumber))
+      errors.phoneNumber = "Invalid phone number";
+    if (!formData.username.trim()) errors.username = "Username is required";
     if (!passwordRegex.test(formData.password))
-      errors.password = 'Password must be 8–20 characters, include uppercase, lowercase, number, and no spaces';
+      errors.password =
+        "Password must be 8–20 characters, include uppercase, lowercase, number, and no spaces";
 
     return errors;
   };
@@ -44,27 +45,32 @@ function UserClientRegistrationForm() {
 
     const dataToSend = {
       ...formData,
-      roles: [{ id: 1, name: 'User Role', authority: 'USER' }]
+      roles: [{ id: 1, name: "User Role", authority: "USER" }],
     };
 
     try {
-      await axios.post(`${import.meta.env.VITE_API_URL}users_clients`, dataToSend);
-      alert('User registered successfully');
+      await axios.post(
+        `${import.meta.env.VITE_API_URL}users_clients`,
+        dataToSend
+      );
+      alert("User registered successfully");
       setFormData({
-        name: '',
-        surname: '',
-        email: '',
-        phoneNumber: '',
-        username: '',
-        password: ''
+        name: "",
+        surname: "",
+        email: "",
+        phoneNumber: "",
+        username: "",
+        password: "",
       });
       setValidationErrors({});
     } catch (error) {
       const errorData = error.response?.data;
-      if (errorData && typeof errorData === 'object') {
+      if (errorData && typeof errorData === "object") {
         setValidationErrors(errorData); // Set backend validation errors
       } else {
-        setValidationErrors({ general: 'Registration failed. Please try again.' });
+        setValidationErrors({
+          general: "Registration failed. Please try again.",
+        });
       }
     }
   };
@@ -96,7 +102,9 @@ function UserClientRegistrationForm() {
             required
             className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          {validationErrors.name && <div className="text-red-600 text-sm">{validationErrors.name}</div>}
+          {validationErrors.name && (
+            <div className="text-red-600 text-sm">{validationErrors.name}</div>
+          )}
         </div>
 
         {/* Surname Input */}
@@ -109,7 +117,11 @@ function UserClientRegistrationForm() {
             required
             className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          {validationErrors.surname && <div className="text-red-600 text-sm">{validationErrors.surname}</div>}
+          {validationErrors.surname && (
+            <div className="text-red-600 text-sm">
+              {validationErrors.surname}
+            </div>
+          )}
         </div>
 
         {/* Email Input */}
@@ -123,7 +135,9 @@ function UserClientRegistrationForm() {
             required
             className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          {validationErrors.email && <div className="text-red-600 text-sm">{validationErrors.email}</div>}
+          {validationErrors.email && (
+            <div className="text-red-600 text-sm">{validationErrors.email}</div>
+          )}
         </div>
 
         {/* Phone Number Input */}
@@ -136,7 +150,11 @@ function UserClientRegistrationForm() {
             required
             className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          {validationErrors.phoneNumber && <div className="text-red-600 text-sm">{validationErrors.phoneNumber}</div>}
+          {validationErrors.phoneNumber && (
+            <div className="text-red-600 text-sm">
+              {validationErrors.phoneNumber}
+            </div>
+          )}
         </div>
 
         {/* Username Input */}
@@ -149,7 +167,11 @@ function UserClientRegistrationForm() {
             required
             className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          {validationErrors.username && <div className="text-red-600 text-sm">{validationErrors.username}</div>}
+          {validationErrors.username && (
+            <div className="text-red-600 text-sm">
+              {validationErrors.username}
+            </div>
+          )}
         </div>
 
         {/* Password Input */}
@@ -163,7 +185,11 @@ function UserClientRegistrationForm() {
             required
             className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          {validationErrors.password && <div className="text-red-600 text-sm">{validationErrors.password}</div>}
+          {validationErrors.password && (
+            <div className="text-red-600 text-sm">
+              {validationErrors.password}
+            </div>
+          )}
         </div>
 
         {/* Submit Button */}

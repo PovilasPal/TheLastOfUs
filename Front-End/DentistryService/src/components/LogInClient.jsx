@@ -1,5 +1,4 @@
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router";
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { Link } from "react-router";
@@ -13,21 +12,15 @@ const LoginClientPage = () => {
   } = useForm();
 
   const [error, setError] = useState("");
-  const [, setLogIn] = useState(false);
   const { login } = useAuth();
-  const navigate = useNavigate();
 
   const onSubmit = async (data) => {
-    setLogIn(true);
-    setError("");
     try {
-      await login(data.username, data.password, "login/client");
-      reset();
-      navigate("/");
-    } catch (err) {
+      setError("");
+      await login(data.username, data.password, "api/login/client");
+    } catch(err) {
+      
       setError("Incorrect username or password");
-    } finally {
-      setLogIn(false);
     }
   };
 
@@ -41,10 +34,7 @@ const LoginClientPage = () => {
         </div>
 
         <div className="mb-4">
-          <form
-            className="space-y-6"
-            onSubmit={handleSubmit(onSubmit)}
-          >
+          <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
             <div>
               <label
                 htmlFor="username"
@@ -65,7 +55,9 @@ const LoginClientPage = () => {
                   onInput={() => setError("")}
                 />
                 {errors.username?.type === "required" && (
-                  <p className=" text-red-600 mb-4 text-center">Can`t be empty</p>
+                  <p className=" text-red-600 mb-4 text-center">
+                    Can`t be empty
+                  </p>
                 )}
               </div>
             </div>
@@ -87,9 +79,13 @@ const LoginClientPage = () => {
                   className={`w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 `}
                   onInput={() => setError("")}
                 />
-                  <p className="text-red-600 mb-4 text-center">{errors.password?.message}</p>
+                <p className="text-red-600 mb-4 text-center">
+                  {errors.password?.message}
+                </p>
                 <div>
-                  {error && <p className="text-red-600 mb-4 text-center">{error}</p>}
+                  {error && (
+                    <p className="text-red-600 mb-4 text-center">{error}</p>
+                  )}
                 </div>
               </div>
             </div>
@@ -103,15 +99,15 @@ const LoginClientPage = () => {
               </button>
             </div>
           </form>
-          {/* <p className="mt-10 text-center text-sm/6 text-gray-500">
+          <p className="mt-10 text-center text-sm/6 text-gray-500">
             Don`t have an account?{" "}
             <Link
-              to={`/signup`}
+              to={`/users_clients`}
               className="font-semibold text-indigo-600 hover:text-indigo-500"
             >
               Sign Up
             </Link>
-          </p> */}
+          </p>
         </div>
       </div>
     </>
