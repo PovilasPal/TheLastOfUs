@@ -5,6 +5,7 @@ import Home from './components/Home'
 import UserClientRegistrationForm from "./components/UserClientRegistrationForm"
 import { Routes, Route } from "react-router";
 import LoginClientPage from "./components/LogInClient";
+import LoginProviderPage from './components/LoginProvider'
 
 function App() {
 
@@ -18,8 +19,7 @@ function App() {
         <Route path="/*" element={<h1>404 Not Found</h1>}/>
         <Route path="/users_clients" element={<UserClientRegistrationForm />} />
       <Route path="/login/client" element={<LoginClientPage />} />
-        <Route path="/users_clients" element={<UserClientRegistrationForm />} />
-      <Route path="/login/client" element={<LoginClientPage />} />
+      <Route path='/login/provider' element={<LoginProviderPage />} />
       </Routes>
   </>
   )
