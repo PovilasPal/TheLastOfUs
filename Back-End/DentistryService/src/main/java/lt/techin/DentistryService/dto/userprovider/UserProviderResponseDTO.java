@@ -1,4 +1,4 @@
-package lt.techin.DentistryService.dto.userprovider;
+package lt.techin.DentistryService.dto.userProvider;
 
 import lt.techin.DentistryService.model.Role;
 
@@ -10,6 +10,5 @@ public record UserProviderResponseDTO(
         String email,
         String phoneNumber,
         String username,
-        List<Role> roles
-) {
+        List<Role> roles) {
 }
