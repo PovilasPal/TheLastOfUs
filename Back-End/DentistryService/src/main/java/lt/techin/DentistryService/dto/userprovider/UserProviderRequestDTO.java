@@ -1,4 +1,4 @@
-package lt.techin.DentistryService.dto.userProvider;
+package lt.techin.DentistryService.dto.userprovider;
 
 import lt.techin.DentistryService.model.Role;
 
