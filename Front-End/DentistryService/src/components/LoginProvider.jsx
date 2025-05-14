@@ -26,14 +26,14 @@ const LoginProviderPage = () => {
 
   return (
     <>
-      <div className="flex min-h-full flex-col justify-center  h-screen">
-        <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-          <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">
+      <div className="max-w-lg mx-auto p-6 bg-white rounded-xl shadow-lg">
+        <div>
+          <h2 className="text-2xl font-bold mb-6 text-center">
             Login as provider
           </h2>
         </div>
 
-        <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+        <div className="mb-4">
           <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
             <div>
               <label
@@ -42,25 +42,25 @@ const LoginProviderPage = () => {
               >
                 Username
               </label>
-              <div className="mt-2">
+              <div className="mb-4">
                 <input
                   type="text"
                   id="username"
                   {...register("username", {
                     required: "Can't be empty",
                   })}
-                  className={`block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 ${
+                  className={`w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                     errors.username ? "border-red" : "greyish-blue"
                   }`}
                   onInput={() => setError("")}
                 />
                 {errors.username?.type === "required" && (
-                  <p className=" text-red-500">Can`t be empty</p>
+                  <p className=" text-red-600 mb-4 text-center">Can`t be empty</p>
                 )}
               </div>
             </div>
             <div>
-              <div className="flex items-center justify-between">
+              <div className="mb-4">
                 <label
                   htmlFor="password"
                   className="block text-sm/6 font-medium text-gray-900"
@@ -69,23 +69,23 @@ const LoginProviderPage = () => {
                 </label>
                 <div className="text-sm"></div>
               </div>
-              <div className="mt-2">
+              <div className="mb-4">
                 <input
                   type="password"
                   id="password"
                   {...register("password", { required: "Can't be empty" })}
-                  className={`block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 `}
+                  className={`w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 `}
                   onInput={() => setError("")}
                 />
-                <p className="text-red-500">{errors.password?.message}</p>
-                <div>{error && <p className="text-red-500">{error}</p>}</div>
+                <p className="text-red-600 mb-4 text-center">{errors.password?.message}</p>
+                <div>{error && <p className="text-red-600 mb-4 text-center">{error}</p>}</div>
               </div>
             </div>
 
             <div>
               <button
                 type="submit"
-                className="flex w-full justify-center rounded-md bg-slate-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-slate-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                className="w-full p-3 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 Sign in
               </button>
