@@ -12,6 +12,7 @@ import java.util.List;
 public class UserProvider implements UserDetails {
 
   @Id
+  @Column(name = "licence_number")
   private String licenceNumber;
 
   private String name;
@@ -22,9 +23,9 @@ public class UserProvider implements UserDetails {
 
   @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(
-          name = "usersp_roles",
+          name = "providers_roles",
           joinColumns = @JoinColumn(name = "user_licence_number"),
-          inverseJoinColumns = @JoinColumn(name = "roles_id")
+          inverseJoinColumns = @JoinColumn(name = "role_id")
   )
   private List<Role> roles;
 
