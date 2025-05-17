@@ -2,8 +2,8 @@ package lt.techin.DentistryService.controller;
 
 import jakarta.validation.Valid;
 import lt.techin.DentistryService.dto.userProvider.UserProviderMapper;
+import lt.techin.DentistryService.dto.userProvider.UserProviderRequestDTO;
 import lt.techin.DentistryService.dto.userProvider.UserProviderResponseDTO;
-import lt.techin.DentistryService.dto.userprovider.UserProviderRequestDTO;
 import lt.techin.DentistryService.model.UserProvider;
 import lt.techin.DentistryService.service.UserProviderService;
 import org.springframework.beans.factory.annotation.Autowired;
