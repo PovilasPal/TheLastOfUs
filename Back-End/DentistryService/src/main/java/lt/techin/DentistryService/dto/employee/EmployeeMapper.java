@@ -3,6 +3,8 @@ package lt.techin.DentistryService.dto.employee;
 import lt.techin.DentistryService.model.Employee;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
+
 @Component
 public class EmployeeMapper {
 
@@ -13,6 +15,7 @@ public class EmployeeMapper {
   }
 
   public void updateEntityFromDto(EmployeeRequestDTO dto, Employee entity) {
+    Objects.requireNonNull(entity, "Employee entity cannot be null");
     if (dto.firstName() != null) {
       entity.setFirstName(dto.firstName());
     }
