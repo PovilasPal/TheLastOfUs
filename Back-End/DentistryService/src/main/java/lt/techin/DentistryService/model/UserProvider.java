@@ -11,6 +11,7 @@ import java.util.List;
 @Table(name = "users_providers")
 public class UserProvider implements UserDetails {
 
+
   @Id
   @Column(name = "licence_number")
   private String licenceNumber;

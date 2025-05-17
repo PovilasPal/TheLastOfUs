@@ -42,6 +42,8 @@ public class UserProviderService {
   public List<UserProvider> findAllProviders() {
     return userProviderRepository.findAll();
   }
+
+
 }
 
 

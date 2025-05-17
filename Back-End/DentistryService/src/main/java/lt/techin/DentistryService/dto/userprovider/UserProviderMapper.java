@@ -1,4 +1,4 @@
-package lt.techin.DentistryService.dto.userprovider;
+package lt.techin.DentistryService.dto.userProvider;
 
 import lt.techin.DentistryService.dto.login.LoginResponseDTO;
 import lt.techin.DentistryService.model.Role;
@@ -8,7 +8,7 @@ import java.util.List;
 
 public class UserProviderMapper {
 
-  public static UserProvider toUserProvider(UserProviderRequestDTO userProviderRequestDTO) {
+  public static UserProvider toUserProvider(lt.techin.DentistryService.dto.userprovider.UserProviderRequestDTO userProviderRequestDTO) {
     return new UserProvider(
             userProviderRequestDTO.licenceNumber(),
             userProviderRequestDTO.name(),
@@ -20,8 +20,8 @@ public class UserProviderMapper {
     );
   }
 
-  public static UserProviderResponseDTO toProviderDTO(UserProvider userProvider) {
-    return new UserProviderResponseDTO(
+  public static lt.techin.DentistryService.dto.userProvider.UserProviderResponseDTO toProviderDTO(UserProvider userProvider) {
+    return new lt.techin.DentistryService.dto.userProvider.UserProviderResponseDTO(
             userProvider.getLicenceNumber(),
             userProvider.getName(),
             userProvider.getEmail(),
@@ -31,9 +31,9 @@ public class UserProviderMapper {
     );
   }
 
-  public static List<UserProviderResponseDTO> toProviderListDTO(List<UserProvider> usersProviders) {
+  public static List<lt.techin.DentistryService.dto.userProvider.UserProviderResponseDTO> toProviderListDTO(List<UserProvider> usersProviders) {
     return usersProviders.stream()
-            .map(u -> new UserProviderResponseDTO(
+            .map(u -> new lt.techin.DentistryService.dto.userProvider.UserProviderResponseDTO(
                     u.getLicenceNumber(),
                     u.getName(),
                     u.getEmail(),
