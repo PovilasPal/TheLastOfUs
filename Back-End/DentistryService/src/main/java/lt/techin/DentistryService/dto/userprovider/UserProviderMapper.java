@@ -1,5 +1,6 @@
 package lt.techin.DentistryService.dto.userProvider;
 
+import jakarta.validation.Valid;
 import lt.techin.DentistryService.dto.login.LoginResponseDTO;
 import lt.techin.DentistryService.model.Role;
 import lt.techin.DentistryService.model.UserProvider;
@@ -8,7 +9,7 @@ import java.util.List;
 
 public class UserProviderMapper {
 
-  public static UserProvider toUserProvider(lt.techin.DentistryService.dto.userprovider.UserProviderRequestDTO userProviderRequestDTO) {
+  public static UserProvider toUserProvider(@Valid UserProviderRequestDTO userProviderRequestDTO) {
     return new UserProvider(
             userProviderRequestDTO.licenceNumber(),
             userProviderRequestDTO.name(),
