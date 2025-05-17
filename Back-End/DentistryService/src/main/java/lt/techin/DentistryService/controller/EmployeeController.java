@@ -26,13 +26,13 @@ public class EmployeeController {
   }
 
   @GetMapping
-  public ResponseEntity<List<EmployeeResponseDTO>> getAllEmployees() {
+  public ResponseEntity<List<EmployeeResponseDTO>> getAllEmployees() throws AccessDeniedException {
     String currentLicence = currentUserProvider.getCurrentLicenceNumber();
     return ResponseEntity.ok(employeeService.getEmployeesForUserProvider(currentLicence));
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<EmployeeResponseDTO> getEmployee(@PathVariable Long id) {
+  public ResponseEntity<EmployeeResponseDTO> getEmployee(@PathVariable Long id) throws AccessDeniedException {
     String currentLicence = currentUserProvider.getCurrentLicenceNumber();
     return ResponseEntity.ok(employeeService.getEmployeeById(currentLicence, id));
   }
@@ -65,13 +65,13 @@ public class EmployeeController {
   @PutMapping("/{id}")
   public ResponseEntity<EmployeeResponseDTO> updateEmployee(
           @PathVariable Long id,
-          @Valid @RequestBody EmployeeRequestDTO request) {
+          @Valid @RequestBody EmployeeRequestDTO request) throws AccessDeniedException {
     String licenceNumber = currentUserProvider.getCurrentLicenceNumber();
     return ResponseEntity.ok(employeeService.updateEmployee(licenceNumber, id, request));
   }
 
   @DeleteMapping("/{id}")
-  public ResponseEntity<Void> deleteEmployee(@PathVariable Long id) {
+  public ResponseEntity<Void> deleteEmployee(@PathVariable Long id) throws AccessDeniedException {
     String currentLicence = currentUserProvider.getCurrentLicenceNumber();
     employeeService.deleteEmployee(currentLicence, id);
     return ResponseEntity.noContent().build();
