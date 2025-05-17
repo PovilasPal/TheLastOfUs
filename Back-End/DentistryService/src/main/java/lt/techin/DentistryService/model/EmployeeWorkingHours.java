@@ -30,6 +30,9 @@ public class EmployeeWorkingHours {
     this.endTime = endTime;
   }
 
+  public EmployeeWorkingHours() {
+  }
+
   public Long getId() {
     return id;
   }
