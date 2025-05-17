@@ -21,6 +21,8 @@ public class SecurityConfig {
             .csrf(c -> c.disable())
             .httpBasic(Customizer.withDefaults())
             .authorizeHttpRequests(auth -> auth
+                    //.requestMatchers("/api/providers/**").hasRole("PROVIDER")
+                    //.requestMatchers("/api/employees/**").hasRole("PROVIDER")
                     .requestMatchers("/**").permitAll()
                     .anyRequest().authenticated()
             );
@@ -32,5 +34,6 @@ public class SecurityConfig {
   public PasswordEncoder passwordEncoder() {
     return new BCryptPasswordEncoder();
   }
+
 }
 
