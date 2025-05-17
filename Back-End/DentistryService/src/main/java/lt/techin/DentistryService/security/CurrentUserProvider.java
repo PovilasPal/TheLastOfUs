@@ -17,10 +17,12 @@ public class CurrentUserProvider {
     return (UserProvider) auth.getPrincipal();
   }
 
-  public String getCurrentLicenceNumber() {
+  public String getCurrentLicenceNumber() throws AccessDeniedException {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    UserProvider userProvider = (UserProvider) authentication.getPrincipal();
-    return userProvider.getLicenceNumber();
+    if (authentication == null || !(authentication.getPrincipal() instanceof UserProvider)) {
+      throw new AccessDeniedException("No authenticated provider");
+    }
+    return ((UserProvider) authentication.getPrincipal()).getLicenceNumber();
   }
 
 }
