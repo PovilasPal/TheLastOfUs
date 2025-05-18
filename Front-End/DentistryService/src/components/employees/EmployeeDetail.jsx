@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { getEmployeeById, deleteEmployee } from '../../api/employeeApi';
+import { toast } from 'react-toastify';
 
-const navigate = useNavigate();
 
 const EmployeeDetail = () => {
   const { id } = useParams();
