@@ -9,6 +9,7 @@ public class Role implements GrantedAuthority {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
+
   private String name;
 
   public Role(long id) {
@@ -42,5 +43,10 @@ public class Role implements GrantedAuthority {
   @Override
   public String getAuthority() {
     return name;
+  }
+
+  @Override
+  public int hashCode() {
+    return name.hashCode();
   }
 }
