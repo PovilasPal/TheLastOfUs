@@ -6,6 +6,7 @@ import lt.techin.DentistryService.dto.employee.EmployeeResponseDTO;
 import lt.techin.DentistryService.security.CurrentUserProvider;
 import lt.techin.DentistryService.service.EmployeeService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -15,6 +16,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/userProviders/me/employees")
+@PreAuthorize("hasRole('PROVIDER')")
 public class EmployeeController {
 
   private final EmployeeService employeeService;
