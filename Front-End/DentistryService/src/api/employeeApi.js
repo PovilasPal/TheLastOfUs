@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { toast } from 'react-toastify'; // Assuming you use toast for notifications
+import { toast } from 'react-toastify';
 
 // Create axios instance with base configuration
 const api = axios.create({
@@ -8,12 +8,10 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  withCredentials: true, // Important: send cookies with requests
+  withCredentials: true, 
 });
 
-// Remove JWT token interceptor (no Authorization header needed)
 
-// Response interceptor for error handling
 api.interceptors.response.use(
   (response) => response,
   (error) => {
