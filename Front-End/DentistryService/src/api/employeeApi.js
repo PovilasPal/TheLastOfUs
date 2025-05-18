@@ -1,5 +1,5 @@
-// src/api/employeeApi.js
 import axios from 'axios';
+import { toast } from 'react-toastify'; // Assuming you use toast for notifications
 
 // Create axios instance with base configuration
 const api = axios.create({
@@ -8,64 +8,39 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: true, // Important: send cookies with requests
 });
 
-// Request interceptor for JWT tokens
-api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('jwt_token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
+// Remove JWT token interceptor (no Authorization header needed)
 
 // Response interceptor for error handling
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    // Handle unauthorized (401) errors
-    if (error.response?.status === 401) {
-      localStorage.removeItem('jwt_token');
-      window.location.href = '/login'; // Redirect to login
-    }
-    api.interceptors.response.use(
-  (response) => {
-    // Successful responses (2xx)
-    return response;
-  },
-  (error) => {
-    // Error responses (4xx, 5xx)
     const { response } = error;
-    
-    // Handle specific status codes
+
     if (response) {
       switch (response.status) {
-        case 401: // Unauthorized
-          localStorage.removeItem('jwt_token');
+        case 401: // Unauthorized - session expired or not logged in
           window.location.href = '/login?reason=session_expired';
           break;
-          
+
         case 403: // Forbidden
           toast.error("You don't have permission for this action");
           break;
-          
+
         case 404: // Not Found
           toast.error("Resource not found");
           break;
-          
+
         case 429: // Too Many Requests
           toast.error("Too many requests, please try again later");
           break;
-          
+
         case 500: // Server Error
           toast.error("Server error - please try again later");
           break;
-          
+
         default:
           toast.error(response.data?.message || "An error occurred");
       }
@@ -75,48 +50,40 @@ api.interceptors.response.use(
       toast.error("Network error - please check your connection");
     }
 
-    // Always reject to allow component-level error handling
     return Promise.reject({
       status: response?.status,
       message: response?.data?.message || error.message,
       code: error.code,
-      data: response?.data
+      data: response?.data,
     });
   }
 );
-    // Handle other errors
-    if (error.response) {
-      // Server responded with error status (4xx, 5xx)
-      console.error('API Error:', {
-        status: error.response.status,
-        data: error.response.data,
-        headers: error.response.headers,
-      });
-    } else if (error.request) {
-      // Request was made but no response received
-      console.error('No response received:', error.request);
-    } else {
-      // Something happened in setting up the request
-      console.error('Request setup error:', error.message);
-    }
 
-    return Promise.reject(error);
-  }
-);
 
-// Auth functions
-export const login = async (credentials) => {
+export const login = async (username, password) => {
   try {
-    const response = await api.post('/auth/login', credentials);
-    localStorage.setItem('jwt_token', response.data.token);
+    const params = new URLSearchParams();
+    params.append('username', username);
+    params.append('password', password);
+
+    const response = await api.post('/login', params, {
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    });
+
+    
     return response.data;
   } catch (error) {
     throw new Error(error.response?.data?.message || 'Login failed');
   }
 };
 
-export const logout = () => {
-  localStorage.removeItem('jwt_token');
+// Logout function: POST to /logout endpoint
+export const logout = async () => {
+  try {
+    await api.post('/logout');
+  } catch (error) {
+    console.error('Logout failed', error);
+  }
 };
 
 // Employee CRUD operations
@@ -165,14 +132,6 @@ export const deleteEmployee = async (id) => {
   }
 };
 
-// Verify token validity
-export const verifyToken = async () => {
-  try {
-    const response = await api.get('/auth/verify');
-    return response.data.valid;
-  } catch (error) {
-    return false;
-  }
-};
 
 export default api;
+
