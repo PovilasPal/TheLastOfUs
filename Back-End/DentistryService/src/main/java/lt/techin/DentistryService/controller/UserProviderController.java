@@ -12,7 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.util.HashMap;
+import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
@@ -62,26 +62,23 @@ public class UserProviderController {
   @PostMapping("/providerRegistration")
   public ResponseEntity<Object> saveUserProvider(
           @Valid @RequestBody UserProviderRequestDTO userProviderRequestDTO) {
-    if (this.userProviderService.existsByLicenceNumber(userProviderRequestDTO.licenceNumber())) {
-      Map<String, String> response = new HashMap<>();
-      response.put("message", "Provider with this licence number already exists");
 
-      return ResponseEntity.badRequest().body(response);
+    if (userProviderService.existsByLicenceNumber(userProviderRequestDTO.licenceNumber())) {
+      return ResponseEntity.badRequest()
+              .body(Map.of("message", "Provider with this licence number already exists"));
     }
+
     UserProvider userProvider = UserProviderMapper.toUserProvider(userProviderRequestDTO);
 
-    String encodedPassword = passwordEncoder.encode(userProvider.getPassword());
-    userProvider.setPassword(encodedPassword);
+    UserProvider savedUserProvider = userProviderService.saveUserProvider(userProvider);
 
-    UserProvider savedUserProvider = this.userProviderService.saveUserProvider(userProvider);
+    URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+            .path("/{id}")
+            .buildAndExpand(savedUserProvider.getLicenceNumber())
+            .toUri();
 
-    return ResponseEntity.created(
-                    ServletUriComponentsBuilder.fromCurrentRequest()
-                            .path("/{id}")
-                            .buildAndExpand(savedUserProvider.getLicenceNumber())
-                            .toUri())
+    return ResponseEntity.created(location)
             .body(UserProviderMapper.toProviderDTO(savedUserProvider));
-
   }
 
 }
