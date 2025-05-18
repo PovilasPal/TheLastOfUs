@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface UserProviderRepository extends JpaRepository<UserProvider, String> {
+
   Optional<UserProvider> findByUsername(String username);
 
 
@@ -16,4 +17,6 @@ public interface UserProviderRepository extends JpaRepository<UserProvider, Stri
   boolean existsByName(String name);
 
   boolean existsByUsername(String username);
+
 }
+
