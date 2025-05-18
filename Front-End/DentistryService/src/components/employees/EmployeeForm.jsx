@@ -27,7 +27,8 @@ const EmployeeForm = () => {
       await createEmployee(formData);
       navigate('/employees');
     } catch (err) {
-      setError(err.response?.data?.message || 'Error creating employee');
+      const message = err.response?.data?.message || err.message || 'Error creating employee';
+      setError(message);
     }
   };
 
@@ -37,7 +38,7 @@ const EmployeeForm = () => {
       {error && <div className="text-red-500 mb-4">{error}</div>}
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block mb-1">First Name (Vardas)</label>
+          <label className="block mb-1">First Name</label>
           <input
             type="text"
             name="firstName"
@@ -49,7 +50,18 @@ const EmployeeForm = () => {
         </div>
         
         <div>
-          <label className="block mb-1">Last Name (Pavardė)</label>
+          <label className="block mb-1">Last Name</label>
+          <input
+            type="text"
+            name="firstName"
+            value={formData.firstName}
+            onChange={handleChange}
+            className="w-full p-2 border rounded"
+            required
+          />
+        </div>
+        <div>
+          <label className="block mb-1">Last Name</label>
           <input
             type="text"
             name="lastName"
@@ -61,7 +73,7 @@ const EmployeeForm = () => {
         </div>
         
         <div>
-          <label className="block mb-1">License Code (Lic. kodas)</label>
+          <label className="block mb-1">License Code</label>
           <input
             type="text"
             name="licenceNumber"
@@ -73,7 +85,7 @@ const EmployeeForm = () => {
         </div>
         
         <div>
-          <label className="block mb-1">Qualification (Kvalifikacija)</label>
+          <label className="block mb-1">Qualification</label>
           <input
             type="text"
             name="qualification"
@@ -84,7 +96,7 @@ const EmployeeForm = () => {
         </div>
         
         <div>
-          <label className="block mb-1">Service (Paslaugos)</label>
+          <label className="block mb-1">Service</label>
           <input
             type="text"
             name="service"
@@ -99,14 +111,14 @@ const EmployeeForm = () => {
             type="submit" 
             className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
           >
-            Save (Išsaugoti)
+            Save
           </button>
           <button 
             type="button" 
             onClick={() => navigate('/employees')}
             className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
           >
-            Cancel (Atšaukti)
+            Cancel
           </button>
         </div>
       </form>
