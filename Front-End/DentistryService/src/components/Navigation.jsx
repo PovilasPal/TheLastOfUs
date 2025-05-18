@@ -38,6 +38,10 @@ const Navigation = () => {
               <Link className="text-xl font-bold hover:text-gray-300" to="/register">
                 <button>Sign Up As Provider</button>
               </Link>
+              {user && user.roles.includes('ROLE_PROVIDER') && (
+  <Link to="/employees" className="nav-link">Employees</Link>
+)}
+
             </div>
           )}
         </div>
