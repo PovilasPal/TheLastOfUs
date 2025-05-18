@@ -15,19 +15,19 @@ const EmployeeList = () => {
  useEffect(() => {
     const fetchEmployees = async () => {
       try {
-        const response = await getEmployees();
-        setEmployees(response.data);
-        setError(null);
-      } catch (err) {
-        if (err.response?.status === 401) {
-          logout();
-          navigate("/login");
-        } else {
-          setError(err.message || "Failed to load employees");
-        }
-      } finally {
-        setLoading(false);
+      const employeesData = await getEmployees();
+      setEmployees(employeesData);
+      setError(null);
+    } catch (err) {
+      if (err.response?.status === 401) {
+        logout();
+        navigate("/login");
+      } else {
+        setError(err.message || "Failed to load employees");
       }
+    } finally {
+      setLoading(false);
+    }
     };
     fetchEmployees();
   }, [logout, navigate]);
