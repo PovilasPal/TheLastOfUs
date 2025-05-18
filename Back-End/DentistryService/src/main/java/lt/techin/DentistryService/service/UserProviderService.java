@@ -41,6 +41,10 @@ public class UserProviderService {
   public void deleteUserProvider(String licenseNumber) {
     this.userProviderRepository.deleteById(licenseNumber);
   }
+
+  public List<UserProvider> searchByAddress(String address) {
+    return userProviderRepository.searchByAddress(address);
+  }
 }
 
 
