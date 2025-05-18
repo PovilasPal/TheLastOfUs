@@ -2,39 +2,33 @@ import axios from "axios";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8081/api',
+  withCredentials: true,
 });
 
-// Set JWT token in headers
-export const setAuthToken = (token) => {
-  if (token) {
-    api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-    localStorage.setItem("jwt_token", token); // Store token
-  } else {
-    delete api.defaults.headers.common["Authorization"];
-    localStorage.removeItem("jwt_token"); // Remove token
-  }
-};
-
-// Initialize auth token if exists
-const token = localStorage.getItem("jwt_token");
-if (token) {
-  setAuthToken(token);
-}
-
-// Login function 
 export const login = async (username, password) => {
   try {
-    const response = await api.post("/api/auth/login", { username, password });
-    setAuthToken(response.data.token); 
+    const params = new URLSearchParams();
+    params.append('username', username);
+    params.append('password', password);
+
+    const response = await api.post("/login", params, {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    });
+    // No token to store, session cookie is set automatically
     return response;
   } catch (error) {
     throw error;
   }
 };
 
-// Logout function
-export const logout = () => {
-  setAuthToken(null);
+export const logout = async () => {
+  try {
+    await api.post("/logout");
+  } catch (error) {
+    console.error("Logout failed", error);
+  }
 };
 
 // Employee API methods
