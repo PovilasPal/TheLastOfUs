@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from "react";
 import PropTypes from 'prop-types';
 
 const AuthContext = createContext();
@@ -29,11 +29,11 @@ export const AuthProvider = ({ children }) => {
     fetchUser();
   }, []);
 
-  const login = useCallback(async (username, password) => {
+  const login = useCallback(async (username, password,endpoint = '/login') => {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch('/login', {
+      const res = await fetch(endpoint, {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
