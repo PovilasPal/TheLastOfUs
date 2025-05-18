@@ -2,6 +2,7 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+
 const UserProviderRegistration = () => {
   const navigate = useNavigate();
   const {
@@ -14,46 +15,39 @@ const UserProviderRegistration = () => {
   const [apiError, setApiError] = React.useState('');
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
-const [formStructure] = React.useState({
-    licenceNumber: '',
-    name: '',
-    email: '',
-    phoneNumber: '',
-    username: '',
-    password: '',
-    roles: [{ id: 3, name: 'PROVIDER' }]
-  });
+  // Predefined roles for provider
+  const predefinedRoles = [{ id: 3, name: 'PROVIDER' }];
 
-  
   const onSubmit = async (data) => {
     setIsSubmitting(true);
     setApiError('');
-    
+
     try {
-      const submissionData = {...data, roles: formStructure.roles};
+      // Append roles to submission data
+      const submissionData = { ...data, roles: predefinedRoles };
 
+      const response = await axios.post(
+        'http://localhost:8081/api/providerRegistration',
+        submissionData,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          withCredentials: true, // important for session-based auth
+        }
+      );
 
-      const response = await axios.post('http://localhost:8081/api/providerRegistration', submissionData, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      
-      // Handle successful registration
       console.log('Registration successful:', response.data);
-      navigate('/registration-success'); 
+      navigate('/registration-success');
     } catch (error) {
       if (error.response) {
-      if (error.response.data && error.response.data.message) {
-        setApiError(error.response.data.message);
+        setApiError(error.response.data?.message || 'Registration failed. Please check your inputs.');
+      } else if (error.request) {
+        setApiError('Network error. Please check your internet connection.');
       } else {
-        setApiError('Registration failed. Please check your inputs.');
+        setApiError('An unexpected error occurred.');
+        console.error('Registration error:', error);
       }
-    } else if (error.request) {
-      setApiError('Network error. Please check your internet connection.');
-    } else {
-      setApiError('An unexpected error occurred.');
-    }
     } finally {
       setIsSubmitting(false);
     }
@@ -62,13 +56,13 @@ const [formStructure] = React.useState({
   return (
     <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
       <h2 className="text-2xl font-bold mb-6 text-center">Provider Registration</h2>
-      
+
       {apiError && (
         <div className="mb-4 p-3 bg-red-100 text-red-700 rounded">
           {apiError}
         </div>
       )}
-      
+
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         {/* Licence Number */}
         <div>
@@ -82,8 +76,8 @@ const [formStructure] = React.useState({
               required: 'Licence number is required',
               pattern: {
                 value: /^[A-Z]{3}\d{5}$/,
-                message: 'Licence number must be in format ABC12345 (3 uppercase letters + 5 digits)'
-              }
+                message: 'Licence number must be in format ABC12345 (3 uppercase letters + 5 digits)',
+              },
             })}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
           />
@@ -120,8 +114,8 @@ const [formStructure] = React.useState({
               required: 'Email is required',
               pattern: {
                 value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                message: 'Invalid email address'
-              }
+                message: 'Invalid email address',
+              },
             })}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
           />
@@ -142,8 +136,9 @@ const [formStructure] = React.useState({
               required: 'Phone number is required',
               pattern: {
                 value: /^\+\d{1,3}\d{9}$/,
-                message: 'Phone number must start with a country code (+ followed by 1-3 digits) and have 9 additional digits (e.g., +37012345678)'
-              }
+                message:
+                  'Phone number must start with a country code (+ followed by 1-3 digits) and have 9 additional digits (e.g., +37012345678)',
+              },
             })}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
           />
@@ -180,8 +175,9 @@ const [formStructure] = React.useState({
               required: 'Password is required',
               pattern: {
                 value: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,16}$/,
-                message: 'Password must contain one digit, one lowercase, one uppercase, one special character, and be 8-16 characters long'
-              }
+                message:
+                  'Password must contain one digit, one lowercase, one uppercase, one special character, and be 8-16 characters long',
+              },
             })}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
           />
@@ -190,9 +186,10 @@ const [formStructure] = React.useState({
           )}
         </div>
 
-        {/* Hidden roles field (since it's predefined as PROVIDER) */}
-        <input type="hidden" {...register('roles')} />
+        {/* Hidden roles field (optional) */}
+        <input type="hidden" value={JSON.stringify(predefinedRoles)} {...register('roles')} />
 
+        {/* Buttons */}
         <div className="flex justify-end">
           <button
             type="button"
@@ -213,7 +210,6 @@ const [formStructure] = React.useState({
       </form>
     </div>
   );
-  
 };
 
 export default UserProviderRegistration;
