@@ -15,7 +15,7 @@ const UserProviderRegistration = () => {
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
 const [formStructure] = React.useState({
-    licenceNumber: '',
+    licenseNumber: '',
     name: '',
     email: '',
     phoneNumber: '',
@@ -72,23 +72,23 @@ const [formStructure] = React.useState({
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         {/* Licence Number */}
         <div>
-          <label htmlFor="licenceNumber" className="block text-sm font-medium text-gray-700">
-            Licence Number
+          <label htmlFor="licenseNumber" className="block text-sm font-medium text-gray-700">
+            License Number
           </label>
           <input
-            id="licenceNumber"
+            id="licenseNumber"
             type="text"
-            {...register('licenceNumber', {
-              required: 'Licence number is required',
+            {...register('licenseNumber', {
+              required: 'License number is required',
               pattern: {
                 value: /^[A-Z]{3}\d{5}$/,
-                message: 'Licence number must be in format ABC12345 (3 uppercase letters + 5 digits)'
+                message: 'License number must be in format ABC12345 (3 uppercase letters + 5 digits)'
               }
             })}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
           />
-          {errors.licenceNumber && (
-            <p className="mt-1 text-sm text-red-600">{errors.licenceNumber.message}</p>
+          {errors.licenseNumber && (
+            <p className="mt-1 text-sm text-red-600">{errors.licenseNumber.message}</p>
           )}
         </div>
 

@@ -1,6 +1,6 @@
 package lt.techin.DentistryService.dto.userclient;
 
-import lt.techin.DentistryService.dto.login.LoginResponseDTO;
+import lt.techin.DentistryService.dto.login.UserLoginResponseDTO;
 import lt.techin.DentistryService.model.Role;
 import lt.techin.DentistryService.model.UserClient;
 
@@ -45,8 +45,8 @@ public class UserClientMapper {
             .toList();
   }
 
-  public static LoginResponseDTO toLoginClientResponseDTO(UserClient userClient) {
-    return new LoginResponseDTO(
+  public static UserLoginResponseDTO toLoginClientResponseDTO(UserClient userClient) {
+    return new UserLoginResponseDTO(
             userClient.getUsername(),
             userClient.getRoles()
                     .stream()

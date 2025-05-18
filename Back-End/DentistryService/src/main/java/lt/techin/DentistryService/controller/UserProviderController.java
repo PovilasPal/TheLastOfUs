@@ -15,6 +15,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
@@ -28,10 +29,10 @@ public class UserProviderController {
     this.userProviderService = userProviderService;
   }
 
-  @GetMapping("/providers/{licenceNumber}")
-  public ResponseEntity<UserProviderResponseDTO> getProviderByLicenceNumber(
-          @PathVariable String licenceNumber) {
-    return userProviderService.findByLicenceNumber(licenceNumber)
+  @GetMapping("/providers/{licenseNumber}")
+  public ResponseEntity<UserProviderResponseDTO> getProviderByLicenseNumber(
+          @PathVariable String licenseNumber) {
+    return userProviderService.findByLicenseNumber(licenseNumber)
             .map(UserProviderMapper::toProviderDTO)
             .map(ResponseEntity::ok)
             .orElse(ResponseEntity.notFound().build());
@@ -49,7 +50,7 @@ public class UserProviderController {
   @GetMapping("/register")
   public Map<String, Object> getRegistrationFormStructure() {
     return Map.of(
-            "licenceNumber", "",
+            "licenseNumber", "",
             "name", "",
             "email", "",
             "phoneNumber", "",
@@ -62,7 +63,7 @@ public class UserProviderController {
   @PostMapping("/providerRegistration")
   public ResponseEntity<Object> saveUserProvider(
           @Valid @RequestBody UserProviderRequestDTO userProviderRequestDTO) {
-    if (this.userProviderService.existsByLicenceNumber(userProviderRequestDTO.licenceNumber())) {
+    if (this.userProviderService.existsByLicenseNumber(userProviderRequestDTO.licenseNumber())) {
       Map<String, String> response = new HashMap<>();
       response.put("message", "Provider with this licence number already exists");
 
@@ -70,18 +71,65 @@ public class UserProviderController {
     }
     UserProvider userProvider = UserProviderMapper.toUserProvider(userProviderRequestDTO);
 
+
     String encodedPassword = passwordEncoder.encode(userProvider.getPassword());
     userProvider.setPassword(encodedPassword);
+    userProvider.setLicenseNumber(userProvider.getLicenseNumber());
 
     UserProvider savedUserProvider = this.userProviderService.saveUserProvider(userProvider);
 
     return ResponseEntity.created(
                     ServletUriComponentsBuilder.fromCurrentRequest()
-                            .path("/{id}")
-                            .buildAndExpand(savedUserProvider.getLicenceNumber())
+                            .path("/{licenseNumber}")
+                            .buildAndExpand(savedUserProvider.getLicenseNumber())
                             .toUri())
             .body(UserProviderMapper.toProviderDTO(savedUserProvider));
 
+  }
+
+
+  @PutMapping("/providers/{licenseNumber}")
+  public ResponseEntity<Object> updateProvider(
+          @PathVariable("licenseNumber") String licenseNumber,
+          @Valid @RequestBody UserProviderRequestDTO userProviderRequestDTO) {
+
+    Optional<UserProvider> findUserProvider = this.userProviderService.findByLicenseNumber(licenseNumber);
+
+    if (findUserProvider.isPresent()) {
+      UserProvider updateUserProvider = findUserProvider.get();
+
+      updateUserProvider.setName(userProviderRequestDTO.name());
+      updateUserProvider.setEmail(userProviderRequestDTO.email());
+      updateUserProvider.setPhoneNumber(userProviderRequestDTO.phoneNumber());
+      updateUserProvider.setDescription(userProviderRequestDTO.description());
+      updateUserProvider.setAddress(userProviderRequestDTO.address());
+      updateUserProvider.setContacts(userProviderRequestDTO.contacts());
+
+      UserProvider saved = this.userProviderService.saveUserProvider(updateUserProvider);
+
+      return ResponseEntity.ok(UserProviderMapper.toProviderDTO(saved));
+    }
+
+    UserProvider newUserProvider = this.userProviderService.saveUserProvider(UserProviderMapper.toUserProvider(userProviderRequestDTO));
+
+    return ResponseEntity.created(
+            ServletUriComponentsBuilder.fromCurrentRequest()
+                    .replacePath("/providers/{licenseNumber}")
+                    .buildAndExpand(newUserProvider.getLicenseNumber())
+                    .toUri()
+    ).body(UserProviderMapper.toProviderDTO(newUserProvider));
+  }
+
+  @DeleteMapping("/providers/{licenseNumber}")
+  public ResponseEntity<Void> deleteUserProvider(@PathVariable("licenseNumber") String licenseNumber) {
+    Optional<UserProvider> findUserProvider = this.userProviderService.findByLicenseNumber(licenseNumber);
+
+    if (findUserProvider.isEmpty()) {
+      return ResponseEntity.notFound().build();
+    }
+
+    this.userProviderService.deleteUserProvider(licenseNumber);
+    return ResponseEntity.noContent().build();
   }
 
 }

@@ -33,6 +33,7 @@ export const AuthProvider = ({ children }) => {
     const user = {
       username,
       password,
+      licenseNumber : userData.licenseNumber,
       roles: userData.roles,
       endpoints
     };

@@ -6,6 +6,7 @@ import UserClientRegistrationForm from "./components/UserClientRegistrationForm"
 import { Routes, Route } from "react-router";
 import LoginClientPage from "./components/LogInClient";
 import LoginProviderPage from './components/LoginProvider'
+import EditProviderProfile from './components/EditProviderProfile';
 
 function App() {
 
@@ -20,6 +21,7 @@ function App() {
         <Route path="/users_clients" element={<UserClientRegistrationForm />} />
       <Route path="/login/client" element={<LoginClientPage />} />
       <Route path='/login/provider' element={<LoginProviderPage />} />
+      <Route path="/provider/profile" element={<EditProviderProfile />} />
       </Routes>
   </>
   )

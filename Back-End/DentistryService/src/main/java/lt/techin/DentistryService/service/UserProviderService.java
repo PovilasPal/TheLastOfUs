@@ -3,7 +3,6 @@ package lt.techin.DentistryService.service;
 import lt.techin.DentistryService.model.UserProvider;
 import lt.techin.DentistryService.repository.UserProviderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,23 +23,23 @@ public class UserProviderService {
   }
 
   public UserProvider saveUserProvider(UserProvider userProvider) {
-
-    if (userProviderRepository.existsByUsername(userProvider.getUsername())) {
-      throw new DuplicateKeyException("Username already exists");
-    }
-    return userProviderRepository.save(userProvider);
+    return this.userProviderRepository.save(userProvider);
   }
 
-  public boolean existsByLicenceNumber(String licenceNumber) {
-    return this.userProviderRepository.existsByLicenceNumber(licenceNumber);
+  public boolean existsByLicenseNumber(String licenseNumber) {
+    return this.userProviderRepository.existsByLicenseNumber(licenseNumber);
   }
 
-  public Optional<UserProvider> findByLicenceNumber(String licenceNumber) {
-    return userProviderRepository.findById(licenceNumber);
+  public Optional<UserProvider> findByLicenseNumber(String licenseNumber) {
+    return userProviderRepository.findById(licenseNumber);
   }
 
   public List<UserProvider> findAllProviders() {
     return userProviderRepository.findAll();
+  }
+
+  public void deleteUserProvider(String licenseNumber) {
+    this.userProviderRepository.deleteById(licenseNumber);
   }
 }
 
