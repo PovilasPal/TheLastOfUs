@@ -1,55 +1,63 @@
-import { Link } from "react-router";
+import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
 
 const Navigation = () => {
   const { user, logout } = useAuth();
 
   return (
-    <>
-      <nav className="bg-gray-800 p-4 text-white">
-        <div className="container mx-auto flex justify-between items-center">
-          <Link className="text-xl font-bold hover:text-gray-300" to="/">
-            <button>Home</button>
-          </Link>
-        </div>
-        <div>
-          {user ? (
-            <>
-              <div className="container mx-auto flex justify-between items-center">
-                <p>You are logged in as {user.username}</p>
+    <nav className="bg-gray-800 text-white shadow-md">
+      <div className="container mx-auto px-6 py-4 flex justify-between items-center">
+        <Link to="/" className="text-2xl font-bold text-white hover:text-gray-300">
+          Home
+        </Link>
 
-                {/* Check if the user has the 'ROLE_PROVIDER' */}
-                {user.roles?.includes("ROLE_PROVIDER") && (
-                  <Link className="text-xl font-bold hover:text-gray-300" to="/provider/profile">
-                    <button>Edit Profile</button>
-                  </Link>
-                )}
+        {user ? (
+          <div className="flex items-center space-x-4">
+            <span className="text-sm text-gray-300">
+              Logged in as <span className="font-semibold text-white">{user.username}</span>
+            </span>
 
-                {/* Log out button */}
-                <Link className="text-xl font-bold hover:text-gray-300" to="/">
-                  <button onClick={logout}>Log out</button>
-                </Link>
-              </div>
-            </>
-          ) : (
-            <div className="container mx-auto flex justify-between items-center">
-              <Link className="text-xl font-bold hover:text-gray-300" to="/login/client">
-                <button>Log In As Client</button>
+            {user.roles?.includes("ROLE_PROVIDER") && (
+              <Link to="/provider/profile">
+                <button className="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded text-white text-sm transition">
+                  Edit Profile
+                </button>
               </Link>
-              <Link className="text-xl font-bold hover:text-gray-300" to="/login/provider">
-                <button>Log In As Provider</button>
-              </Link>
-              <Link className="text-xl font-bold hover:text-gray-300" to="/users_clients">
-                <button>Sign Up As Client</button>
-              </Link>
-              <Link className="text-xl font-bold hover:text-gray-300" to="/register">
-                <button>Sign Up As Provider</button>
-              </Link>
-            </div>
-          )}
-        </div>
-      </nav>
-    </>
+            )}
+
+            <button
+              onClick={logout}
+              className="bg-red-500 hover:bg-red-600 px-4 py-2 rounded text-white text-sm transition"
+            >
+              Log Out
+            </button>
+          </div>
+        ) : (
+          <div className="flex items-center space-x-2">
+            <Link to="/login/client">
+              <button className="border border-blue-300 text-blue-200 hover:text-white hover:bg-blue-500 px-3 py-1.5 rounded text-sm transition">
+                Log In as Client
+              </button>
+            </Link>
+            <Link to="/login/provider">
+              <button className="border border-blue-300 text-blue-200 hover:text-white hover:bg-blue-500 px-3 py-1.5 rounded text-sm transition">
+                Log In as Provider
+              </button>
+            </Link>
+            <Link to="/users_clients">
+              <button className="border border-green-300 text-green-200 hover:text-white hover:bg-green-500 px-3 py-1.5 rounded text-sm transition">
+                Sign Up as Client
+              </button>
+            </Link>
+            <Link to="/register">
+              <button className="border border-green-300 text-green-200 hover:text-white hover:bg-green-500 px-3 py-1.5 rounded text-sm transition">
+                Sign Up as Provider
+              </button>
+            </Link>
+          </div>
+        )}
+      </div>
+    </nav>
   );
 };
 
