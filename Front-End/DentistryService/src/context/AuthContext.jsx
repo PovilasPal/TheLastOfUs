@@ -1,156 +1,99 @@
-import { createContext, useContext, useState, useEffect, useCallback, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
-import { setAuthToken, login as apiLogin, logout as apiLogout } from "../api/api";
+import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
+import PropTypes from 'prop-types';
 
-const AuthContext = createContext({
-  user: null,
-  login: async () => {},
-  logout: () => {},
-  register: async () => {},
-  isAuthenticated: false,
-  loading: true,
-  error: null,
-  clearError: () => {},
-});
+const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const navigate = useNavigate();
-  const [authState, setAuthState] = useState({
-    user: null,
-    loading: true,
-    error: null,
-  });
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const updateAuthState = useCallback((updates) => {
-    setAuthState(prev => ({ ...prev, ...updates }));
-  }, []);
-
+  // Fetch current user info on mount
   useEffect(() => {
-    const initializeAuth = async () => {
-      const token = localStorage.getItem("jwt_token");
-      const savedUser = localStorage.getItem("user");
-
-      if (token && savedUser) {
-        try {
-          updateAuthState({ loading: true });
-          const response = await api.get("/user/me");
-          
-          const userData = JSON.parse(savedUser);
-          if (response.data.username !== userData.username) {
-            throw new Error("Session mismatch");
-          }
-
-          updateAuthState({
-            user: userData,
-            loading: false,
-          });
-        } catch (error) {
-          console.error("Session validation failed:", error);
-          apiLogout();
-          updateAuthState({
-            user: null,
-            loading: false,
-            error: "Session expired. Please login again.",
-          });
+    const fetchUser = async () => {
+      try {
+        setLoading(true);
+        const res = await fetch('/api/user/me', { credentials: 'include' });
+        if (res.ok) {
+          const userData = await res.json();
+          setUser(userData);
+        } else {
+          setUser(null);
         }
-      } else {
-        updateAuthState({ loading: false });
+      } catch (err) {
+        setUser(null);
+      } finally {
+        setLoading(false);
       }
     };
+    fetchUser();
+  }, []);
 
-    initializeAuth();
-  }, [updateAuthState]);
-
-  const login = useCallback(async (username, password, endpoints) => {
+  const login = useCallback(async (username, password) => {
+    setLoading(true);
+    setError(null);
     try {
-      updateAuthState({ loading: true, error: null });
-      const authResponse = await apiLogin(username, password);
-      const userResponse = await api.get(endpoints);
-      const userData = userResponse.data;
+      const res = await fetch('/login', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({ username, password }),
+      });
 
-      if (!userData) {
-        throw new Error("User data not found");
+      if (!res.ok) {
+        const errData = await res.json();
+        throw new Error(errData.message || 'Login failed');
       }
 
-      const user = {
-        username,
-        roles: userData.roles,
-        endpoints,
-      };
-
-      localStorage.setItem("user", JSON.stringify(user));
-      updateAuthState({
-        user,
-        loading: false,
-      });
-      navigate("/");
-      return user;
-    } catch (error) {
-      updateAuthState({
-        loading: false,
-        error: error.response?.data?.message || error.message,
-      });
-      throw error;
+      // After login, fetch user info
+      const userRes = await fetch('/api/user/me', { credentials: 'include' });
+      if (userRes.ok) {
+        const userData = await userRes.json();
+        setUser(userData);
+      }
+    } catch (err) {
+      setError(err.message);
+      setUser(null);
+      throw err;
+    } finally {
+      setLoading(false);
     }
-  }, [navigate, updateAuthState]);
+  }, []);
 
-  const registerUser = useCallback(async (username, password) => {
+  const logout = useCallback(async () => {
+    setLoading(true);
     try {
-      updateAuthState({ loading: true, error: null });
-      await api.post("/register", { username, password });
-      navigate("/login");
-      updateAuthState({ loading: false });
-    } catch (error) {
-      updateAuthState({
-        loading: false,
-        error: error.response?.data?.message || "Registration failed",
+      await fetch('/logout', {
+        method: 'POST',
+        credentials: 'include',
       });
-      throw error;
+      setUser(null);
+    } catch (err) {
+      console.error('Logout failed', err);
+    } finally {
+      setLoading(false);
     }
-  }, [navigate, updateAuthState]);
-
-  const logout = useCallback(() => {
-    apiLogout();
-    localStorage.removeItem("user");
-    updateAuthState({ user: null });
-    navigate("/login");
-  }, [navigate, updateAuthState]);
-
-  const clearError = useCallback(() => {
-    updateAuthState({ error: null });
-  }, [updateAuthState]);
-
-  // Memoize the context value to prevent unnecessary re-renders
+  }, []);
   const value = useMemo(() => ({
-    user: authState.user,
+    user,
+    loading,
+    error,
     login,
     logout,
-    register: registerUser,
-    isAuthenticated: !!authState.user,
-    loading: authState.loading,
-    error: authState.error,
-    clearError,
-  }), [
-    authState.user,
-    authState.loading,
-    authState.error,
-    login,
-    logout,
-    registerUser,
-    clearError,
-  ]);
+    isAuthenticated: !!user,
+  }), [user, loading, error, login, logout]);
 
   return (
     <AuthContext.Provider value={value}>
-      {!authState.loading && children}
+      {!loading && children}
     </AuthContext.Provider>
   );
 };
-
+AuthProvider.propTypes = {
+  children: PropTypes.node.isRequired,
+};
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
+  if (!context) throw new Error('useAuth must be used within AuthProvider');
   return context;
 };
