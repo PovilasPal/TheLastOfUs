@@ -1,22 +1,25 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import PropTypes from 'prop-types';
 
-const ProtectedRoute = ({ children, requiredRole }) => {
-  const { user, isAuthenticated } = useAuth();
+
+const ProtectedRoute = ({ children }) => {
+  const { isAuthenticated, loading } = useAuth();
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   if (!isAuthenticated) {
-    // Not logged in
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/login/client" replace />;
   }
 
-  if (requiredRole && (!user.roles || !user.roles.includes(requiredRole))) {
-    // Logged in but missing required role
-    return <Navigate to="/unauthorized" replace />;
-  }
-
-  // Authorized
   return children;
+ 
+};
+ProtectedRoute.propTypes = {
+  children: PropTypes.node.isRequired,
 };
 
 export default ProtectedRoute;
