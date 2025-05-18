@@ -17,10 +17,17 @@ const Navigation = () => {
             <>
               <div className="container mx-auto flex justify-between items-center">
                 <p>You are logged in as {user.username}</p>
+
+                {/* Check if the user has the 'ROLE_PROVIDER' */}
+                {user.roles?.includes("ROLE_PROVIDER") && (
+                  <Link className="text-xl font-bold hover:text-gray-300" to="/provider/profile">
+                    <button>Edit Profile</button>
+                  </Link>
+                )}
+
+                {/* Log out button */}
                 <Link className="text-xl font-bold hover:text-gray-300" to="/">
-                  <button onClick={logout}>
-                    Log out
-                  </button>
+                  <button onClick={logout}>Log out</button>
                 </Link>
               </div>
             </>
