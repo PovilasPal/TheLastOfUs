@@ -1,19 +1,24 @@
 import { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { getEmployeeById } from '../../api/employeeApi';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import { getEmployeeById, deleteEmployee } from '../../api/employeeApi';
+
+const navigate = useNavigate();
 
 const EmployeeDetail = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [employee, setEmployee] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchEmployee = async () => {
       try {
-        const response = await getEmployeeById(id);
-        setEmployee(response.data);
+        const employeeData = await getEmployeeById(id);
+        setEmployee(employeeData);
       } catch (error) {
         console.error("Error fetching employee:", error);
+        setError("Failed to load employee details.");
       } finally {
         setLoading(false);
       }
@@ -21,7 +26,21 @@ const EmployeeDetail = () => {
     fetchEmployee();
   }, [id]);
 
+  const handleDelete = async () => {
+    if (window.confirm("Are you sure you want to delete this employee?")) {
+      try {
+        await deleteEmployee(id);
+        navigate('/employees');
+      } catch (error) {
+        console.error("Failed to delete employee:", error);
+        alert("Failed to delete employee. Please try again.");
+      }
+    }
+  };
+
+
   if (loading) return <div>Loading...</div>;
+  if (error) return <div className="text-red-600">{error}</div>;
   if (!employee) return <div>Employee not found</div>;
 
   return (
@@ -33,12 +52,20 @@ const EmployeeDetail = () => {
         <p><span className="font-semibold">Qualification:</span> {employee.qualification}</p>
         <p><span className="font-semibold">Service:</span> {employee.service}</p>
       </div>
-      <Link 
-        to="/employees" 
-        className="mt-4 inline-block bg-gray-200 px-4 py-2 rounded hover:bg-gray-300"
-      >
-        Back to List
-      </Link>
+      <div className="mt-4 flex space-x-4">
+        <Link 
+          to="/employees" 
+          className="bg-gray-200 px-4 py-2 rounded hover:bg-gray-300"
+        >
+          Back to List
+        </Link>
+        <button
+          onClick={handleDelete}
+          className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+        >
+          Delete
+        </button>
+      </div>
     </div>
   );
 };
