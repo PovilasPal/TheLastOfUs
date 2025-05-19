@@ -5,7 +5,12 @@ import autoprefixer from 'autoprefixer'
 
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react({
+      jsxRuntime: 'classic',
+    }
+
+  )],
   css: {
     postcss: {
       plugins: [
