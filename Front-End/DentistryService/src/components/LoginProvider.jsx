@@ -1,3 +1,4 @@
+import React from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
 import { useState } from "react";
@@ -18,7 +19,7 @@ const LoginProviderPage = () => {
   const onSubmit = async (data) => {
     try {
       setError("");
-      await login(data.username, data.password, "api/login/provider");
+      await login(data.username, data.password, '/api/login/provider');
     } catch (err) {
       setError("Incorrect username or password");
     }
