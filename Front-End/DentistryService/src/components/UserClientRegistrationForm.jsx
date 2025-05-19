@@ -1,207 +1,212 @@
-import React, { useState } from "react";
-import axios from "axios";
+import React from 'react';
+import { useForm } from 'react-hook-form';
+import axios from 'axios';
+import { Link, useNavigate } from 'react-router-dom';
 
-function UserClientRegistrationForm() {
-  const [formData, setFormData] = useState({
-    name: "",
-    surname: "",
-    email: "",
-    phoneNumber: "",
-    username: "",
-    password: "",
-  });
+const UserClientRegistrationForm = () => {
+  const navigate = useNavigate();
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm();
 
-  const [validationErrors, setValidationErrors] = useState({});
+  const [apiError, setApiError] = React.useState('');
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
 
-  // Validate the form fields
-  const validateForm = () => {
-    const errors = {};
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    const phoneRegex = /^\+?[1-9]\d{7,20}$/;
-    const passwordRegex = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=\S+$).{8,20}$/;
+  const onSubmit = async (data) => {
+    setIsSubmitting(true);
+    setApiError('');
 
-    if (!formData.name.trim()) errors.name = "First name is required";
-    if (!formData.surname.trim()) errors.surname = "Last name is required";
-    if (!emailRegex.test(formData.email)) errors.email = "Invalid email format";
-    if (!phoneRegex.test(formData.phoneNumber))
-      errors.phoneNumber = "Invalid phone number";
-    if (!formData.username.trim()) errors.username = "Username is required";
-    if (!passwordRegex.test(formData.password))
-      errors.password =
-        "Password must be 8–20 characters, include uppercase, lowercase, number, and no spaces";
-
-    return errors;
-  };
-
-  // Handle form submission
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    const errors = validateForm();
-    if (Object.keys(errors).length > 0) {
-      setValidationErrors(errors); // Set errors if validation fails
-      return;
-    }
-
-    const dataToSend = {
-      ...formData,
-      roles: [{ id: 1, name: "User Role", authority: "USER" }],
+    const submissionData = {
+      ...data,
+      roles: [{ id: 1, name: 'USER', authority: 'USER' }],
     };
 
     try {
-      await axios.post(
+      const response = await axios.post(
         `${import.meta.env.VITE_API_URL}users_clients`,
-        dataToSend
+        submissionData,
+        {
+          headers: { 'Content-Type': 'application/json' },
+        }
       );
-      alert("User registered successfully");
-      setFormData({
-        name: "",
-        surname: "",
-        email: "",
-        phoneNumber: "",
-        username: "",
-        password: "",
-      });
-      setValidationErrors({});
+
+      console.log('Client registration successful:', response.data);
+      navigate('/registration-success');
     } catch (error) {
-      const errorData = error.response?.data;
-      if (errorData && typeof errorData === "object") {
-        setValidationErrors(errorData); // Set backend validation errors
+      if (error.response?.data?.message) {
+        setApiError(error.response.data.message);
+      } else if (error.request) {
+        setApiError('Network error. Please check your internet connection.');
       } else {
-        setValidationErrors({
-          general: "Registration failed. Please try again.",
-        });
+        setApiError('An unexpected error occurred.');
       }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-    setValidationErrors({}); // Clear errors when user edits the form
-  };
-
   return (
-    <div className="max-w-lg mx-auto p-6 bg-white rounded-xl shadow-lg">
-      <h2 className="text-2xl font-bold mb-6 text-center">User Registration</h2>
+    <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
+      <h2 className="text-2xl font-bold mb-6 text-center">Client Registration</h2>
 
-      {/* Display general error message */}
-      {validationErrors.general && (
-        <div className="text-red-600 mb-4 text-center">
-          {validationErrors.general}
-        </div>
+      {apiError && (
+        <div className="mb-4 p-3 bg-red-100 text-red-700 rounded">{apiError}</div>
       )}
 
-      <form onSubmit={handleSubmit}>
-        {/* Name Input */}
-        <div className="mb-4">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        {/* First Name */}
+        <div>
+          <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+            First Name
+          </label>
           <input
-            name="name"
-            placeholder="First Name"
-            onChange={handleChange}
-            value={formData.name}
-            required
-            className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            id="name"
+            type="text"
+            {...register('name', { required: 'First name is required' })}
+            className="mt-1 block w-full border p-2 rounded-md shadow-sm border-gray-300 focus:border-blue-500 focus:ring-blue-500"
           />
-          {validationErrors.name && (
-            <div className="text-red-600 text-sm">{validationErrors.name}</div>
+          {errors.name && (
+            <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>
           )}
         </div>
 
-        {/* Surname Input */}
-        <div className="mb-4">
+        {/* Last Name */}
+        <div>
+          <label htmlFor="surname" className="block text-sm font-medium text-gray-700">
+            Last Name
+          </label>
           <input
-            name="surname"
-            placeholder="Last Name"
-            onChange={handleChange}
-            value={formData.surname}
-            required
-            className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            id="surname"
+            type="text"
+            {...register('surname', { required: 'Last name is required' })}
+            className="mt-1 block w-full border p-2 rounded-md shadow-sm border-gray-300 focus:border-blue-500 focus:ring-blue-500"
           />
-          {validationErrors.surname && (
-            <div className="text-red-600 text-sm">
-              {validationErrors.surname}
-            </div>
+          {errors.surname && (
+            <p className="mt-1 text-sm text-red-600">{errors.surname.message}</p>
           )}
         </div>
 
-        {/* Email Input */}
-        <div className="mb-4">
+        {/* Email */}
+        <div>
+          <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+            Email
+          </label>
           <input
-            name="email"
+            id="email"
             type="email"
-            placeholder="Email"
-            onChange={handleChange}
-            value={formData.email}
-            required
-            className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            {...register('email', {
+              required: 'Email is required',
+              pattern: {
+                value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                message: "Email must include a valid username, '@' symbol, and a domain name (e.g., user@example.com).",
+              },
+            })}
+            className="mt-1 block w-full border p-2 rounded-md shadow-sm border-gray-300 focus:border-blue-500 focus:ring-blue-500"
           />
-          {validationErrors.email && (
-            <div className="text-red-600 text-sm">{validationErrors.email}</div>
+          {errors.email && (
+            <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
           )}
         </div>
 
-        {/* Phone Number Input */}
-        <div className="mb-4">
+        {/* Phone Number */}
+        <div>
+          <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700">
+            Phone Number
+          </label>
           <input
-            name="phoneNumber"
-            placeholder="Phone Number"
-            onChange={handleChange}
-            value={formData.phoneNumber}
-            required
-            className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            id="phoneNumber"
+            type="tel"
+            {...register('phoneNumber', {
+              required: 'Phone number is required',
+              pattern: {
+                value: /^\+370\d{8}$/,
+                message:
+                  'Phone number must start with +370 followed by 8 digits (e.g., +37062345678)',
+              },
+            })}
+            className="mt-1 block w-full border p-2 rounded-md shadow-sm border-gray-300 focus:border-blue-500 focus:ring-blue-500"
           />
-          {validationErrors.phoneNumber && (
-            <div className="text-red-600 text-sm">
-              {validationErrors.phoneNumber}
-            </div>
+          {errors.phoneNumber && (
+            <p className="mt-1 text-sm text-red-600">{errors.phoneNumber.message}</p>
           )}
         </div>
 
-        {/* Username Input */}
-        <div className="mb-4">
+        {/* Username */}
+        <div>
+          <label htmlFor="username" className="block text-sm font-medium text-gray-700">
+            Username
+          </label>
           <input
-            name="username"
-            placeholder="Username"
-            onChange={handleChange}
-            value={formData.username}
-            required
-            className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            id="username"
+            type="text"
+            {...register('username', { required: 'Username is required' })}
+            className="mt-1 block w-full border p-2 rounded-md shadow-sm border-gray-300 focus:border-blue-500 focus:ring-blue-500"
           />
-          {validationErrors.username && (
-            <div className="text-red-600 text-sm">
-              {validationErrors.username}
-            </div>
+          {errors.username && (
+            <p className="mt-1 text-sm text-red-600">{errors.username.message}</p>
           )}
         </div>
 
-        {/* Password Input */}
-        <div className="mb-6">
+        {/* Password */}
+        <div>
+          <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+            Password
+          </label>
           <input
-            name="password"
+            id="password"
             type="password"
-            placeholder="Password"
-            onChange={handleChange}
-            value={formData.password}
-            required
-            className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            {...register('password', {
+              required: 'Password is required',
+              pattern: {
+                value:
+                  /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,16}$/,
+                message:
+                  'Password must contain one digit, one lowercase, one uppercase, one special character, and be 8–16 characters long',
+              },
+            })}
+            className="mt-1 block w-full border p-2 rounded-md shadow-sm border-gray-300 focus:border-blue-500 focus:ring-blue-500"
           />
-          {validationErrors.password && (
-            <div className="text-red-600 text-sm">
-              {validationErrors.password}
-            </div>
+          {errors.password && (
+            <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
           )}
         </div>
 
-        {/* Submit Button */}
-        <button
-          type="submit"
-          className="w-full p-3 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          Register
-        </button>
+        {/* Hidden roles field */}
+        <input type="hidden" value="USER" {...register('roles')} />
+
+        <div className="flex justify-end">
+          <button
+            type="button"
+            onClick={() => {
+              reset();
+              setApiError('');
+            }}
+            className="mr-3 px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300"
+            disabled={isSubmitting}
+          >
+            Reset
+          </button>
+          <button
+            type="submit"
+            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-blue-300"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? 'Registering...' : 'Register'}
+          </button>
+        </div>
       </form>
+
+      <p className="mt-6 text-center text-sm text-gray-500">
+        Already have an account?{' '}
+        <Link to="/login" className="font-semibold text-indigo-600 hover:text-indigo-500">
+          Sign In
+        </Link>
+      </p>
     </div>
   );
-}
+};
 
 export default UserClientRegistrationForm;

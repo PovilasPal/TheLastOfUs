@@ -122,9 +122,9 @@ const EditProviderProfile = () => {
             {...register("phoneNumber", {
               required: "Phone number is required",
               pattern: {
-                value: /^\+\d{1,3}\d{9}$/,
+                value: /^\+370\d{8}$/,
                 message:
-                  "Phone number must start with + and contain 1-3 country digits, followed by 9 digits (e.g., +37012345678)",
+                  "Phone number must start with +370 followed by 8 digits (e.g., +37062345678)",
               },
             })}
             className="w-full border p-2 rounded"
