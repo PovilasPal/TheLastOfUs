@@ -24,7 +24,7 @@ public record UserClientRequestDTO(
 
         @NotNull
         @Size(min = 1, max = 20, message = "Name needs to be minumum 1 and maximum 20 symbols")
-        @Pattern(regexp = "^\\+?[1-9]\\d{7,20}$", message = "Phone number must start with a non-zero digit, may begin with '+', and contain 8 to 21 digits total (no letters or symbols).")
+        @Pattern(regexp = "^\\+370\\d{8}$", message = "Phone number must be in the format +370 followed by 8 digits")
         String phoneNumber,
 
         @NotNull
@@ -32,7 +32,10 @@ public record UserClientRequestDTO(
         String username,
 
         @NotNull
-        @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=\\S+$).{8,20}$", message = "At least one digit, lower case letter, upper case letter. No whitespace allowed. Minimum 8 symbols.")
+        @Pattern(
+                regexp = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,16}$",
+                message = "Password must contain one digit, one lowercase, one uppercase, one special character (!@#$%^&*), and be 8–16 characters long"
+        )
         String password,
 
         List<Role> roles

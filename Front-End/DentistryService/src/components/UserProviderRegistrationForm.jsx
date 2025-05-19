@@ -117,9 +117,9 @@ const [formStructure] = React.useState({
             id="email"
             type="email"
             {...register('email', {
-              required: 'Email is required',
+              required: "Email must include a valid username, '@' symbol, and a domain name (e.g., user@example.com).",
               pattern: {
-                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
                 message: 'Invalid email address'
               }
             })}
@@ -141,8 +141,8 @@ const [formStructure] = React.useState({
             {...register('phoneNumber', {
               required: 'Phone number is required',
               pattern: {
-                value: /^\+\d{1,3}\d{9}$/,
-                message: 'Phone number must start with a country code (+ followed by 1-3 digits) and have 9 additional digits (e.g., +37012345678)'
+                value: /^\+370\d{8}$/,
+                message: "Phone number must start with +370 followed by 8 digits (e.g., +37062345678)"
               }
             })}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border"
