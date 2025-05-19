@@ -26,7 +26,7 @@ const LoginProviderPage = () => {
   };
 
   return (
-    <>
+    
       <div className="max-w-lg mx-auto p-6 bg-white rounded-xl shadow-lg">
         <div>
           <h2 className="text-2xl font-bold mb-6 text-center">
@@ -103,7 +103,7 @@ const LoginProviderPage = () => {
           </p>
         </div>
       </div>
-    </>
+    
   );
 };
 

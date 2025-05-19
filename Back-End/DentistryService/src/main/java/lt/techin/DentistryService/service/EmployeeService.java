@@ -30,28 +30,28 @@ public class EmployeeService {
 
   }
 
-  public List<EmployeeResponseDTO> getEmployeesForUserProvider(String providerLicenceNumber) {
-    return employeeRepository.findByUserProviderLicenceNumberAndIsActiveTrue(providerLicenceNumber)
+  public List<EmployeeResponseDTO> getEmployeesForUserProvider(String providerLicenseNumber) {
+    return employeeRepository.findByUserProviderLicenseNumberAndIsActiveTrue(providerLicenseNumber)
             .stream()
             .map(employeeMapper::toResponseDTO)
             .toList();
   }
 
-  public EmployeeResponseDTO getEmployeeById(String providerLicenceNumber, Long employeeId) {
+  public EmployeeResponseDTO getEmployeeById(String providerLicenseNumber, Long employeeId) {
     Employee employee = employeeRepository
-            .findByIdAndUserProviderLicenceNumber(employeeId, providerLicenceNumber)
+            .findByIdAndUserProviderLicenseNumber(employeeId, providerLicenseNumber)
             .orElseThrow(() -> new ResponseStatusException(
                     HttpStatus.NOT_FOUND,
-                    "Employee not found or doesn't belong to provider with licence: " + providerLicenceNumber
+                    "Employee not found or doesn't belong to provider with license: " + providerLicenseNumber
             ));
 
     return employeeMapper.toResponseDTO(employee);
   }
 
-  public EmployeeResponseDTO updateEmployee(String providerLicence, Long employeeId, EmployeeRequestDTO request) {
+  public EmployeeResponseDTO updateEmployee(String providerLicense, Long employeeId, EmployeeRequestDTO request) {
     // 1. Verify provider exists
-    UserProvider provider = userProviderRepository.findByLicenceNumber(providerLicence)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Provider not found with licence: " + providerLicence));
+    UserProvider provider = userProviderRepository.findByLicenseNumber(providerLicense)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Provider not found with licence: " + providerLicense));
 
     // 2. Verify employee exists and belongs to this provider
     Employee employee = employeeRepository.findByIdAndUserProvider(employeeId, provider)
@@ -61,7 +61,7 @@ public class EmployeeService {
             ));
     employee.setFirstName(request.firstName());
     employee.setLastName(request.lastName());
-    employee.setLicenceNumber(request.licenceNumber());
+    employee.setLicenseNumber(request.licenseNumber());
     employee.setQualification(request.qualification() != null ? request.qualification() : "");
     employee.setService(request.service() != null ? request.service() : "");
 
@@ -70,13 +70,13 @@ public class EmployeeService {
     return employeeMapper.toResponseDTO(updatedEmployee);
   }
 
-  public void deleteEmployee(String providerLicenceNumber, Long employeeId) {
+  public void deleteEmployee(String providerLicenseNumber, Long employeeId) {
     // 1. Find employee by ID and verify it belongs to the provider
     Employee employee = employeeRepository
-            .findByIdAndUserProviderLicenceNumber(employeeId, providerLicenceNumber)
+            .findByIdAndUserProviderLicenseNumber(employeeId, providerLicenseNumber)
             .orElseThrow(() -> new ResponseStatusException(
                     HttpStatus.NOT_FOUND,
-                    "Employee not found or doesn't belong to provider with licence: " + providerLicenceNumber
+                    "Employee not found or doesn't belong to provider with licence: " + providerLicenseNumber
             ));
 
     // 2. Soft delete (set active to false)
@@ -86,14 +86,14 @@ public class EmployeeService {
     employeeRepository.save(employee);
   }
 
-  public EmployeeResponseDTO createEmployee(String providerLicence, EmployeeRequestDTO request) {
+  public EmployeeResponseDTO createEmployee(String providerLicense, EmployeeRequestDTO request) {
     // Verify provider exists
-    UserProvider provider = userProviderRepository.findByLicenceNumber(providerLicence)
-            .orElseThrow(() -> new ProviderNotFoundException(providerLicence));
+    UserProvider provider = userProviderRepository.findByLicenseNumber(providerLicense)
+            .orElseThrow(() -> new ProviderNotFoundException(providerLicense));
 
-    // Check for duplicate employee licence
-    if (employeeRepository.existsByLicenceNumber(request.licenceNumber())) {
-      throw new EmployeeLicenceConflictException(request.licenceNumber());
+    // Check for duplicate employee license
+    if (employeeRepository.existsByLicenseNumber(request.licenseNumber())) {
+      throw new EmployeeLicenceConflictException(request.licenseNumber());
     }
 
     // Create and save employee
@@ -106,15 +106,15 @@ public class EmployeeService {
   // Exception classes
   @ResponseStatus(HttpStatus.NOT_FOUND)
   public static class ProviderNotFoundException extends RuntimeException {
-    public ProviderNotFoundException(String licence) {
-      super("Provider not found with licence: " + licence);
+    public ProviderNotFoundException(String license) {
+      super("Provider not found with licence: " + license);
     }
   }
 
   @ResponseStatus(HttpStatus.CONFLICT)
   public static class EmployeeLicenceConflictException extends RuntimeException {
-    public EmployeeLicenceConflictException(String licence) {
-      super("Employee licence already exists: " + licence);
+    public EmployeeLicenceConflictException(String license) {
+      super("Employee licence already exists: " + license);
     }
   }
 }

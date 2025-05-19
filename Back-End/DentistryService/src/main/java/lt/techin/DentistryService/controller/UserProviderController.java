@@ -28,10 +28,10 @@ public class UserProviderController {
     this.userProviderService = userProviderService;
   }
 
-  @GetMapping("/providers/{licenceNumber}")
-  public ResponseEntity<UserProviderResponseDTO> getProviderByLicenceNumber(
-          @PathVariable String licenceNumber) {
-    return userProviderService.findByLicenceNumber(licenceNumber)
+  @GetMapping("/providers/{licenseNumber}")
+  public ResponseEntity<UserProviderResponseDTO> getProviderByLicenseNumber(
+          @PathVariable String licenseNumber) {
+    return userProviderService.findByLicenseNumber(licenseNumber)
             .map(UserProviderMapper::toProviderDTO)
             .map(ResponseEntity::ok)
             .orElse(ResponseEntity.notFound().build());
@@ -63,7 +63,7 @@ public class UserProviderController {
   public ResponseEntity<Object> saveUserProvider(
           @Valid @RequestBody UserProviderRequestDTO userProviderRequestDTO) {
 
-    if (userProviderService.existsByLicenceNumber(userProviderRequestDTO.licenceNumber())) {
+    if (userProviderService.existsByLicenseNumber(userProviderRequestDTO.licenseNumber())) {
       return ResponseEntity.badRequest()
               .body(Map.of("message", "Provider with this licence number already exists"));
     }
@@ -74,7 +74,7 @@ public class UserProviderController {
 
     URI location = ServletUriComponentsBuilder.fromCurrentRequest()
             .path("/{id}")
-            .buildAndExpand(savedUserProvider.getLicenceNumber())
+            .buildAndExpand(savedUserProvider.getLicenseNumber())
             .toUri();
 
     return ResponseEntity.created(location)

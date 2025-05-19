@@ -12,7 +12,7 @@ public class Employee {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
   @ManyToOne
-  @JoinColumn(name = "provider_licence_number", referencedColumnName = "licence_number", nullable = false)
+  @JoinColumn(name = "provider_license_number", referencedColumnName = "license_number", nullable = false)
   private UserProvider userProvider;
 
   @Column(name = "first_name", nullable = false)
@@ -22,7 +22,7 @@ public class Employee {
   private String lastName;
 
   @Column(nullable = false, unique = true)
-  private String licenceNumber;
+  private String licenseNumber;
   @Column
   private String qualification;
   @Column
@@ -35,11 +35,11 @@ public class Employee {
   @CreationTimestamp
   private LocalDateTime appointment;
 
-  public Employee(UserProvider userProvider, String firstName, String lastName, String licenceNumber, String qualification, String service) {
+  public Employee(UserProvider userProvider, String firstName, String lastName, String licenseNumber, String qualification, String service) {
     this.userProvider = userProvider;
     this.firstName = firstName;
     this.lastName = lastName;
-    this.licenceNumber = licenceNumber;
+    this.licenseNumber = licenseNumber;
     this.qualification = qualification;
     this.service = service;
     this.appointment = LocalDateTime.now();
@@ -77,12 +77,12 @@ public class Employee {
     this.lastName = lastName;
   }
 
-  public String getLicenceNumber() {
-    return licenceNumber;
+  public String getLicenseNumber() {
+    return licenseNumber;
   }
 
-  public void setLicenceNumber(String licenceNumber) {
-    this.licenceNumber = licenceNumber;
+  public void setLicenseNumber(String licenceNumber) {
+    this.licenseNumber = licenseNumber;
   }
 
   public String getQualification() {

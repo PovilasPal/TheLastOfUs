@@ -13,8 +13,8 @@ public class UserProvider implements UserDetails {
 
 
   @Id
-  @Column(name = "licence_number")
-  private String licenceNumber;
+  @Column(name = "license_number")
+  private String licenseNumber;
 
   private String name;
   private String email;
@@ -25,13 +25,13 @@ public class UserProvider implements UserDetails {
   @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(
           name = "providers_roles",
-          joinColumns = @JoinColumn(name = "user_licence_number"),
+          joinColumns = @JoinColumn(name = "user_license_number"),
           inverseJoinColumns = @JoinColumn(name = "role_id")
   )
   private List<Role> roles;
 
-  public UserProvider(String licenceNumber, String name, String email, String phoneNumber, String username, String password, List<Role> roles) {
-    this.licenceNumber = licenceNumber;
+  public UserProvider(String licenseNumber, String name, String email, String phoneNumber, String username, String password, List<Role> roles) {
+    this.licenseNumber = licenseNumber;
     this.name = name;
     this.email = email;
     this.phoneNumber = phoneNumber;
@@ -43,12 +43,12 @@ public class UserProvider implements UserDetails {
   public UserProvider() {
   }
 
-  public String getLicenceNumber() {
-    return licenceNumber;
+  public String getLicenseNumber() {
+    return licenseNumber;
   }
 
-  public void setLicenceNumber(String licenceNumber) {
-    this.licenceNumber = licenceNumber;
+  public void setLicenseNumber(String licenceNumber) {
+    this.licenseNumber = licenceNumber;
   }
 
   public String getName() {

@@ -24,8 +24,8 @@ public class EmployeeMapper {
       entity.setLastName(dto.lastName());
     }
 
-    if (dto.licenceNumber() != null) {
-      entity.setLicenceNumber(dto.licenceNumber());
+    if (dto.licenseNumber() != null) {
+      entity.setLicenseNumber(dto.licenseNumber());
     }
 
     // Handle nullable fields with defaults
@@ -42,7 +42,7 @@ public class EmployeeMapper {
             employee.getId(),
             employee.getFirstName(),
             employee.getLastName(),
-            employee.getLicenceNumber(),
+            employee.getLicenseNumber(),
             employee.getQualification(),
             employee.getService(),
             employee.getAppointment()

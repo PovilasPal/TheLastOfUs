@@ -8,13 +8,14 @@ import java.util.List;
 import java.util.Optional;
 
 public interface EmployeeRepository extends JpaRepository<Employee, Long> {
-  Optional<Employee> findByIdAndUserProviderLicenceNumber(Long id, String licenceNumber);
+  Optional<Employee> findByIdAndUserProviderLicenseNumber(Long id, String licenceNumber);
 
 
-  List<Employee> findByUserProviderLicenceNumberAndIsActiveTrue(String licenceNumber);
+  List<Employee> findByUserProviderLicenseNumberAndIsActiveTrue(String licenseNumber);
 
-  boolean existsByLicenceNumber(String licenceNumber);
+  boolean existsByLicenseNumber(String licenceNumber);
 
   Optional<Employee> findByIdAndUserProvider(Long employeeId, UserProvider provider);
+
 
 }

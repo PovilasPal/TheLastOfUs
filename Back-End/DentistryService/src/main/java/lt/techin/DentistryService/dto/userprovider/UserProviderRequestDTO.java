@@ -5,7 +5,7 @@ import lt.techin.DentistryService.model.Role;
 import java.util.List;
 
 public record UserProviderRequestDTO(
-        String licenceNumber,
+        String licenseNumber,
         String name,
         String email,
         String phoneNumber,

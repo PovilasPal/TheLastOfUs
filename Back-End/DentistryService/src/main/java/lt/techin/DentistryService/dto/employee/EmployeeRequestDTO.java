@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 public record EmployeeRequestDTO(@NotBlank String firstName,
                                  @NotBlank String lastName,
-                                 @NotBlank @Email String licenceNumber,
+                                 @NotBlank @Email String licenseNumber,
                                  String qualification,
                                  String service,
                                  LocalDateTime appointment

@@ -24,6 +24,7 @@ function App() {
         <Route path="/users_clients" element={<UserClientRegistrationForm />} />
       <Route path="/login/client" element={<LoginClientPage />} />
       <Route path='/login/provider' element={<LoginProviderPage />} />
+      
  <Route path="/employees" element={
         <ProtectedRoute>
           <EmployeeList />

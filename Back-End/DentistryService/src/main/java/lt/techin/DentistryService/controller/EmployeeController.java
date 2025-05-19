@@ -29,14 +29,14 @@ public class EmployeeController {
 
   @GetMapping
   public ResponseEntity<List<EmployeeResponseDTO>> getAllEmployees() throws AccessDeniedException {
-    String currentLicence = currentUserProvider.getCurrentLicenceNumber();
-    return ResponseEntity.ok(employeeService.getEmployeesForUserProvider(currentLicence));
+    String currentLicense = currentUserProvider.getCurrentLicenseNumber();
+    return ResponseEntity.ok(employeeService.getEmployeesForUserProvider(currentLicense));
   }
 
   @GetMapping("/{id}")
   public ResponseEntity<EmployeeResponseDTO> getEmployee(@PathVariable Long id) throws AccessDeniedException {
-    String currentLicence = currentUserProvider.getCurrentLicenceNumber();
-    return ResponseEntity.ok(employeeService.getEmployeeById(currentLicence, id));
+    String currentLicense = currentUserProvider.getCurrentLicenseNumber();
+    return ResponseEntity.ok(employeeService.getEmployeeById(currentLicense, id));
   }
 
   @PostMapping
@@ -44,12 +44,12 @@ public class EmployeeController {
           @Valid @RequestBody EmployeeRequestDTO request) throws AccessDeniedException {
 
     // Get authenticated provider's licence number
-    String providerLicence = currentUserProvider.getCurrentProvider()
-            .getLicenceNumber();
+    String providerLicense = currentUserProvider.getCurrentProvider()
+            .getLicenseNumber();
 
     // Create employee tied to this provider
     EmployeeResponseDTO response = employeeService.createEmployee(
-            providerLicence,
+            providerLicense,
             request
     );
 
@@ -68,14 +68,14 @@ public class EmployeeController {
   public ResponseEntity<EmployeeResponseDTO> updateEmployee(
           @PathVariable Long id,
           @Valid @RequestBody EmployeeRequestDTO request) throws AccessDeniedException {
-    String licenceNumber = currentUserProvider.getCurrentLicenceNumber();
+    String licenceNumber = currentUserProvider.getCurrentLicenseNumber();
     return ResponseEntity.ok(employeeService.updateEmployee(licenceNumber, id, request));
   }
 
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> deleteEmployee(@PathVariable Long id) throws AccessDeniedException {
-    String currentLicence = currentUserProvider.getCurrentLicenceNumber();
-    employeeService.deleteEmployee(currentLicence, id);
+    String currentLicense = currentUserProvider.getCurrentLicenseNumber();
+    employeeService.deleteEmployee(currentLicense, id);
     return ResponseEntity.noContent().build();
   }
 

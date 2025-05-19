@@ -10,9 +10,9 @@ public interface UserProviderRepository extends JpaRepository<UserProvider, Stri
   Optional<UserProvider> findByUsername(String username);
 
 
-  boolean existsByLicenceNumber(String licenceNumber);
+  boolean existsByLicenseNumber(String licenseNumber);
 
-  Optional<UserProvider> findByLicenceNumber(String licenceNumber);
+  Optional<UserProvider> findByLicenseNumber(String licenseNumber);
 
   boolean existsByName(String name);
 
