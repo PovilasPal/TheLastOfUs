@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -22,6 +23,9 @@ public class UserProvider implements UserDetails {
   private String contacts;
   private String username;
   private String password;
+
+  @OneToMany(mappedBy = "provider", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<Employee> employees = new ArrayList<>();
 
   @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(
