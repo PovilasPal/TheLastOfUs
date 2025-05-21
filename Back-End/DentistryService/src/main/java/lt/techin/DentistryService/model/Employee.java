@@ -1,9 +1,12 @@
 package lt.techin.DentistryService.model;
 
+
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "employees")
@@ -16,10 +19,13 @@ public class Employee {
   private String lastName;
   private String qualification;
 
-  @ElementCollection
-  @CollectionTable(name = "employee_treatments", joinColumns = @JoinColumn(name = "employee_license_number"))
-  @Column(name = "treatment")
-  private List<String> treatments;
+  @ManyToMany(fetch = FetchType.EAGER)
+  @JoinTable(
+          name = "employee_treatments",
+          joinColumns = @JoinColumn(name = "employee_license_number"),
+          inverseJoinColumns = @JoinColumn(name = "treatment_id")
+  )
+  private Set<Treatment> treatments = new HashSet<>();
 
   @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, orphanRemoval = true)
   private List<Appointment> appointments = new ArrayList<>();
@@ -28,7 +34,12 @@ public class Employee {
   @JoinColumn(name = "provider_license_number")
   private UserProvider provider;
 
-  public Employee(String name, String lastName, String qualification, List<String> treatments, List<Appointment> appointments, UserProvider provider) {
+  public Employee() {
+  }
+
+  public Employee(String licenseNumber, String name, String lastName, String qualification,
+                  Set<Treatment> treatments, List<Appointment> appointments, UserProvider provider) {
+    this.licenseNumber = licenseNumber;
     this.name = name;
     this.lastName = lastName;
     this.qualification = qualification;
@@ -37,8 +48,7 @@ public class Employee {
     this.provider = provider;
   }
 
-  public Employee() {
-  }
+  // Getters and setters
 
   public String getLicenseNumber() {
     return licenseNumber;
@@ -72,11 +82,11 @@ public class Employee {
     this.qualification = qualification;
   }
 
-  public List<String> getTreatments() {
+  public Set<Treatment> getTreatments() {
     return treatments;
   }
 
-  public void setTreatments(List<String> treatments) {
+  public void setTreatments(Set<Treatment> treatments) {
     this.treatments = treatments;
   }
 
