@@ -3,6 +3,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import api from '../api/api.js';
+import Select from 'react-select';
 
 // Validation schema
 const schema = yup.object().shape({
@@ -121,46 +122,58 @@ export default function EmployeeManager() {
       <h1 className="text-3xl font-bold mb-6">Employee Management</h1>
 
       {error && <div className="mb-4 text-red-600 font-semibold">{error}</div>}
-
-      {/* Employee List */}
-      <ul className="mb-8 space-y-4">
-        {employees.map((emp) => (
-          <li
-            key={emp.licenseNumber}
-            className="p-4 border rounded shadow-sm flex flex-col md:flex-row md:items-center md:justify-between"
-          >
-            <div>
-              <p className="font-semibold text-lg">
-                {emp.name} {emp.lastName}
-              </p>
-              <p className="text-gray-600">{emp.qualification}</p>
-              <p className="text-gray-700 mt-1">
-                Treatments:{' '}
-                {emp.treatments
-                  .map((t) => (typeof t === 'string' ? t : t.name))
-                  .join(', ')}
-              </p>
-            </div>
-            <div className="mt-4 md:mt-0 flex space-x-3">
-              <button
-                onClick={() => handleEdit(emp)}
-                disabled={loading}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition"
-              >
-                Edit
-              </button>
-              <button
-                onClick={() => handleDelete(emp.licenseNumber)}
-                disabled={loading}
-                className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded transition"
-              >
-                Delete
-              </button>
-            </div>
-          </li>
-        ))}
-      </ul>
-
+<ul className="mb-8 space-y-4">
+  {employees.map((emp) => (
+    <li
+      key={emp.licenseNumber}
+      className="p-4 border rounded shadow-sm flex flex-col md:flex-row md:items-center md:justify-between"
+    >
+      <div>
+        <p className="font-semibold text-lg">
+          {emp.name} {emp.lastName}
+        </p>
+        <p className="text-gray-600">{emp.qualification}</p>
+        <p className="text-gray-700 mt-1">
+          Treatments:{' '}
+          {emp.treatments
+            .map((t) => (typeof t === 'string' ? t : t.name))
+            .join(', ')}
+        </p>
+        {/* Appointments display goes here */}
+        <p className="text-gray-700 mt-1">
+          Appointments:{' '}
+          {emp.appointments && emp.appointments.length > 0 ? (
+            <ul className="list-disc ml-5">
+              {emp.appointments.map((appt, idx) => (
+                <li key={idx}>
+                  {appt.date} {appt.startTime} - {appt.endTime}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <span className="italic text-gray-500">No appointments</span>
+          )}
+        </p>
+      </div>
+      <div className="mt-4 md:mt-0 flex space-x-3">
+        <button
+          onClick={() => handleEdit(emp)}
+          disabled={loading}
+          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition"
+        >
+          Edit
+        </button>
+        <button
+          onClick={() => handleDelete(emp.licenseNumber)}
+          disabled={loading}
+          className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded transition"
+        >
+          Delete
+        </button>
+      </div>
+    </li>
+  ))}
+</ul>
       {/* Employee Form */}
       <h2 className="text-2xl font-semibold mb-4">
         {editingLicenseNumber ? 'Edit Employee' : 'Add New Employee'}
@@ -248,41 +261,33 @@ export default function EmployeeManager() {
         </div>
 
         {/* Treatments Multi-select */}
-        <div>
-          <label htmlFor="treatmentIds" className="block mb-1 font-medium">
-            Treatments
-          </label>
-          <Controller
-            name="treatmentIds"
-            control={control}
-            render={({ field }) => (
-              <select
-                {...field}
-                multiple
-                className={`w-full h-32 px-3 py-2 border rounded focus:outline-none focus:ring-2 ${
-                  errors.treatmentIds
-                    ? 'border-red-500 focus:ring-red-500'
-                    : 'border-gray-300 focus:ring-blue-500'
-                }`}
-                onChange={(e) => {
-                  const selected = Array.from(e.target.selectedOptions).map((o) =>
-                    Number(o.value)
-                  );
-                  field.onChange(selected);
-                }}
-              >
-                {treatments.map((t) => (
-                  <option key={t.id} value={t.id}>
-                    {t.name}
-                  </option>
-                ))}
-              </select>
-            )}
-          />
-          {errors.treatmentIds && (
-            <p className="text-red-500 mt-1 text-sm">{errors.treatmentIds.message}</p>
-          )}
-        </div>
+       
+<Controller
+  name="treatmentIds"
+  control={control}
+  render={({ field }) => (
+    <Select
+      {...field}
+      isMulti
+      options={treatments.map(t => ({
+        value: t.id,
+        label: t.name
+      }))}
+      value={treatments
+        .filter(t => field.value.includes(t.id))
+        .map(t => ({ value: t.id, label: t.name }))}
+      onChange={selected => {
+        field.onChange(selected ? selected.map(option => option.value) : []);
+      }}
+      className="react-select-container"
+      classNamePrefix="react-select"
+      placeholder="Select treatments"
+    />
+  )}
+/>
+
+
+
 
         {/* Buttons */}
         <div className="flex items-center space-x-4">
