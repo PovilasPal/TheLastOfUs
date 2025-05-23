@@ -39,11 +39,4 @@ public class EmployeeMapper {
     );
   }
 
-  private Appointment toAppointmentEntity(EmployeeRequestDTO.AppointmentDTO dto) {
-    Appointment appointment = new Appointment();
-    appointment.setDate(dto.date());
-    appointment.setStartTime(dto.startTime());
-    appointment.setEndTime(dto.endTime());
-    return appointment;
-  }
 }
