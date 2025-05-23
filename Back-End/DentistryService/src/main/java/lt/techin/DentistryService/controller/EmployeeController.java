@@ -15,7 +15,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/provider/employees")
@@ -33,13 +32,9 @@ public class EmployeeController {
   @GetMapping
   public ResponseEntity<List<EmployeeResponseDTO>> getEmployees(Authentication authentication) {
     UserProvider provider = (UserProvider) authentication.getPrincipal();
-    List<Employee> employees = employeeService.getEmployeesForProvider(provider.getLicenseNumber());
+    List<EmployeeResponseDTO> employees = employeeService.getEmployeesForProvider(provider.getLicenseNumber());
 
-    List<EmployeeResponseDTO> employeeDTOs = employees.stream()
-            .map(EmployeeMapper::toResponseDTO)
-            .collect(Collectors.toList());
-
-    return ResponseEntity.ok(employeeDTOs);
+    return ResponseEntity.ok(employees);
   }
 
   // Add a new employee for the logged-in provider
