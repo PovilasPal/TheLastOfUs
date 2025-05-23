@@ -7,6 +7,7 @@ import { Routes, Route } from "react-router";
 import LoginClientPage from "./components/LogInClient";
 import LoginProviderPage from './components/LoginProvider'
 import EditProviderProfile from './components/EditProviderProfile';
+import EditClientProfile from './components/EditClientProfile';
 
 function App() {
 
@@ -22,6 +23,7 @@ function App() {
       <Route path="/login/client" element={<LoginClientPage />} />
       <Route path='/login/provider' element={<LoginProviderPage />} />
       <Route path="/provider/profile" element={<EditProviderProfile />} />
+      <Route path="/client/profile" element={<EditClientProfile />} />
       </Routes>
   </>
   )
