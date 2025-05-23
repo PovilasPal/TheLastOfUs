@@ -1,7 +1,10 @@
 package lt.techin.DentistryService.service;
 
-import jakarta.transaction.Transactional;
+import lt.techin.DentistryService.dto.appointment.AppointmentMapper;
+import lt.techin.DentistryService.dto.appointment.AppointmentRequestDTO;
+import lt.techin.DentistryService.dto.employee.EmployeeMapper;
 import lt.techin.DentistryService.dto.employee.EmployeeRequestDTO;
+import lt.techin.DentistryService.dto.employee.EmployeeResponseDTO;
 import lt.techin.DentistryService.model.Appointment;
 import lt.techin.DentistryService.model.Employee;
 import lt.techin.DentistryService.model.Treatment;
@@ -10,6 +13,7 @@ import lt.techin.DentistryService.repository.EmployeeRepository;
 import lt.techin.DentistryService.repository.TreatmentRepository;
 import lt.techin.DentistryService.repository.UserProviderRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
@@ -23,10 +27,18 @@ public class EmployeeService {
   private final UserProviderRepository userProviderRepository;
   private final TreatmentRepository treatmentRepository;
 
-  public EmployeeService(EmployeeRepository employeeRepository, UserProviderRepository userProviderRepository, TreatmentRepository treatmentRepository) {
+
+  public EmployeeService(EmployeeRepository employeeRepository, UserProviderRepository userProviderRepository,
+                         TreatmentRepository treatmentRepository) {
     this.employeeRepository = employeeRepository;
     this.userProviderRepository = userProviderRepository;
     this.treatmentRepository = treatmentRepository;
+  }
+
+  @Transactional
+  public Employee saveEmployee(EmployeeRequestDTO dto) {
+    Employee employee = toEntity(dto);
+    return employeeRepository.save(employee);
   }
 
   @Transactional
@@ -39,17 +51,27 @@ public class EmployeeService {
     employee.setLastName(dto.lastName());
     employee.setQualification(dto.qualification());
 
-    // Fetch Treatment entities by IDs
+    // Treatments mapping (your existing code)
     Set<Treatment> treatments = (dto.treatmentIds() == null) ? Collections.emptySet() :
             dto.treatmentIds().stream()
                     .map(id -> treatmentRepository.findById(id)
                             .orElseThrow(() -> new RuntimeException("Treatment not found with id: " + id)))
                     .collect(Collectors.toSet());
-    // Map appointments if needed
+    employee.setTreatments(treatments);
+
+    // Appointments mapping (rewritten)
     if (dto.appointments() != null) {
       List<Appointment> appointments = dto.appointments().stream()
-              .map(this::toAppointmentEntity)
+              .map(empApptDto -> {
+                AppointmentRequestDTO apptDto = new AppointmentRequestDTO(
+                        empApptDto.date(),
+                        empApptDto.startTime(),
+                        empApptDto.endTime()
+                );
+                return AppointmentMapper.toEntity(apptDto);
+              })
               .collect(Collectors.toList());
+
       appointments.forEach(a -> a.setEmployee(employee));
       employee.setAppointments(appointments);
     }
@@ -57,7 +79,17 @@ public class EmployeeService {
     return employee;
   }
 
-  private Appointment toAppointmentEntity(EmployeeRequestDTO.AppointmentDTO dto) {
+
+  @Transactional(readOnly = true)
+  public List<EmployeeResponseDTO> getEmployeesForProvider(String providerLicenseNumber) {
+    List<Employee> employees = employeeRepository.findByProviderLicenseNumberWithDetails(providerLicenseNumber);
+    return employees.stream()
+            .map(EmployeeMapper::toResponseDTO)
+            .collect(Collectors.toList());
+  }
+
+
+  private Appointment toEntity(AppointmentRequestDTO dto) {
     Appointment appointment = new Appointment();
     appointment.setDate(dto.date());
     appointment.setStartTime(dto.startTime());
@@ -65,10 +97,7 @@ public class EmployeeService {
     return appointment;
   }
 
-  public List<Employee> getEmployeesForProvider(String providerLicenseNumber) {
-    return employeeRepository.findByProviderLicenseNumber(providerLicenseNumber);
-  }
-
+  @Transactional
   public Employee addEmployee(String providerLicenseNumber, Employee employee) {
     UserProvider provider = userProviderRepository.findById(providerLicenseNumber)
             .orElseThrow(() -> new RuntimeException("Provider not found"));
@@ -77,6 +106,7 @@ public class EmployeeService {
     return employeeRepository.save(employee);
   }
 
+  @Transactional
   public Employee updateEmployee(String providerLicenseNumber, String employeeLicenseNumber, Employee updatedEmployee) {
     Employee employee = employeeRepository.findById(employeeLicenseNumber)
             .orElseThrow(() -> new RuntimeException("Employee not found"));
@@ -95,6 +125,7 @@ public class EmployeeService {
     return employeeRepository.save(employee);
   }
 
+  @Transactional
   public void deleteEmployee(String providerLicenseNumber, String employeeLicenseNumber) {
     Employee employee = employeeRepository.findById(employeeLicenseNumber)
             .orElseThrow(() -> new RuntimeException("Employee not found"));
