@@ -3,10 +3,12 @@ import UserProviderRegistration from './components/UserProviderRegistrationForm'
 import Navigation from './components/Navigation'
 import Home from './components/Home'
 import UserClientRegistrationForm from "./components/UserClientRegistrationForm"
-import { Routes, Route } from "react-router";
 import LoginClientPage from "./components/LogInClient";
 import LoginProviderPage from './components/LoginProvider'
 import EditProviderProfile from './components/EditProviderProfile';
+import EmployeeManager from './components/EmployeeManager';
+import { Routes, Route } from "react-router";
+
 import EditClientProfile from './components/EditClientProfile';
 
 function App() {
@@ -15,18 +17,19 @@ function App() {
     <>
       <Navigation/>
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/register" element={<UserProviderRegistration/>}/>
-        <Route path="/registration-success" element={<h1>Registration successful</h1>}/>
-        <Route path="/*" element={<h1>404 Not Found</h1>}/>
-        <Route path="/users_clients" element={<UserClientRegistrationForm />} />
+      <Route path="/" element={<Home />} />
+      <Route path="/register" element={<UserProviderRegistration/>}/>
+      <Route path="/registration-success" element={<h1>Registration successful</h1>}/>
+      <Route path="/users_clients" element={<UserClientRegistrationForm />} />
       <Route path="/login/client" element={<LoginClientPage />} />
       <Route path='/login/provider' element={<LoginProviderPage />} />
       <Route path="/provider/profile" element={<EditProviderProfile />} />
+      <Route path="/provider/employees" element={<EmployeeManager />} />
+      <Route path="/*" element={<h1>404 Not Found</h1>}/>
       <Route path="/client/profile" element={<EditClientProfile />} />
       </Routes>
   </>
   )
 }
 
-export default App
+export default App;

@@ -24,6 +24,12 @@ const Navigation = () => {
                 </button>
               </Link>
             )}
+              <Link to="/provider/employees">
+                <button className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded text-white text-sm transition">
+                  Employee Manager
+               </button>
+            </Link>
+      
 
                         {user.roles?.includes("ROLE_USER") && (
               <Link to="/client/profile">
