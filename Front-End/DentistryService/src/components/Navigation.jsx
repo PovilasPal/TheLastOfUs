@@ -24,7 +24,12 @@ const Navigation = () => {
                 </button>
               </Link>
             )}
-
+              <Link to="/provider/employees">
+                <button className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded text-white text-sm transition">
+                  Employee Manager
+               </button>
+            </Link>
+      
             <button
               onClick={logout}
               className="bg-red-500 hover:bg-red-600 px-4 py-2 rounded text-white text-sm transition"
