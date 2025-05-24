@@ -9,6 +9,7 @@ import EditProviderProfile from './components/EditProviderProfile';
 import EmployeeManager from './components/EmployeeManager';
 import { Routes, Route } from "react-router";
 
+import EditClientProfile from './components/EditClientProfile';
 
 function App() {
 
@@ -25,6 +26,7 @@ function App() {
       <Route path="/provider/profile" element={<EditProviderProfile />} />
       <Route path="/provider/employees" element={<EmployeeManager />} />
       <Route path="/*" element={<h1>404 Not Found</h1>}/>
+      <Route path="/client/profile" element={<EditClientProfile />} />
       </Routes>
   </>
   )

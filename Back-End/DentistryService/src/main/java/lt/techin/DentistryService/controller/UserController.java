@@ -7,9 +7,12 @@ import lt.techin.DentistryService.dto.userprovider.UserProviderMapper;
 import lt.techin.DentistryService.dto.userprovider.UserProviderResponseDTO;
 import lt.techin.DentistryService.model.UserClient;
 import lt.techin.DentistryService.model.UserProvider;
+import lt.techin.DentistryService.service.UserClientService;
 import lt.techin.DentistryService.service.UserProviderService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,9 +25,14 @@ import java.util.List;
 public class UserController {
 
   private final UserProviderService userProviderService;
+  private final UserClientService userClientService;
 
-  public UserController(UserProviderService userProviderService) {
+  @Autowired
+  private PasswordEncoder passwordEncoder;
+
+  public UserController(UserProviderService userProviderService, UserClientService userClientService) {
     this.userProviderService = userProviderService;
+    this.userClientService = userClientService;
   }
 
   @GetMapping("/login/client")
