@@ -25,7 +25,7 @@ const Navigation = () => {
               </Link>
             )}
 
-                        {user.roles?.includes("ROLE_CLIENT") && (
+                        {user.roles?.includes("ROLE_USER") && (
               <Link to="/client/profile">
                 <button className="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded text-white text-sm transition">
                   Edit Profile

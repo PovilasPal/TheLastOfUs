@@ -9,7 +9,6 @@ const EditClientProfile = () => {
   const navigate = useNavigate();
 
   const [apiError, setApiError] = useState("");
-  const [initialData, setInitialData] = useState({});
 
   const {
     register,
@@ -18,6 +17,10 @@ const EditClientProfile = () => {
     watch,
     formState: { errors },
   } = useForm();
+
+  // Stebim password ir confirmPassword laukus
+  const password = watch("password", "");
+  const confirmPassword = watch("confirmPassword", "");
 
   useEffect(() => {
     const fetchClientData = async () => {
@@ -28,7 +31,7 @@ const EditClientProfile = () => {
         }
 
         const response = await axios.get(
-          `http://localhost:8081/api/client/${user.id}`
+          `http://localhost:8081/users_clients/${user.id}`
         );
 
         const fields = [
@@ -38,10 +41,10 @@ const EditClientProfile = () => {
           "email",
           "phoneNumber",
           "username",
+          // Nesvarbu įkelti slaptažodį į formą, dažnai to nedarome,
+          // bet jei nori, gali pridėti. Aš neįkelsiu slaptažodžio.
         ];
-
         fields.forEach((field) => setValue(field, response.data[field]));
-        setInitialData(response.data); // save original values
       } catch (error) {
         console.error("Error fetching client data:", error);
         setApiError("Failed to fetch client profile.");
@@ -52,31 +55,18 @@ const EditClientProfile = () => {
   }, [user, setValue]);
 
   const onSubmit = async (formData) => {
+    // Pašalinam confirmPassword iš siuntimo
+    const { confirmPassword, ...sendData } = formData;
+
+    // Jei password tuščias, pašalinam jį iš siuntimo, kad nesikeistų
+    if (!sendData.password) {
+      delete sendData.password;
+    }
+
     try {
-      const changedData = {};
-      for (const key in formData) {
-        if (
-          key !== "confirmPassword" &&
-          formData[key] &&
-          formData[key] !== initialData[key]
-        ) {
-          changedData[key] = formData[key];
-        }
-      }
-
-      // tik jei slaptažodis įvestas ir sutampa
-      if (formData.password && formData.password === formData.confirmPassword) {
-        changedData.password = formData.password;
-      }
-
-      if (Object.keys(changedData).length === 0) {
-        alert("No changes made.");
-        return;
-      }
-
       await axios.put(
-        `http://localhost:8081/api/client/${user.id}`,
-        { ...changedData, roles: user.roles }
+        `http://localhost:8081/users_clients/${user.id}`,
+        { ...sendData, roles: user.roles }
       );
       alert("Profile updated successfully!");
       navigate("/");
@@ -89,7 +79,9 @@ const EditClientProfile = () => {
   const handleDelete = async () => {
     if (window.confirm("Are you sure you want to delete your account?")) {
       try {
-        await axios.delete(`http://localhost:8081/api/client/${user.id}`);
+        await axios.delete(
+          `http://localhost:8081/users_clients/${user.id}`
+        );
         logout();
         navigate("/");
       } catch (err) {
@@ -98,9 +90,6 @@ const EditClientProfile = () => {
       }
     }
   };
-
-  const password = watch("password");
-  const confirmPassword = watch("confirmPassword");
 
   return (
     <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded shadow">
@@ -116,6 +105,7 @@ const EditClientProfile = () => {
             {...register("name")}
             className="w-full border p-2 rounded"
           />
+          {errors.name && <p className="text-red-600 text-sm">{errors.name.message}</p>}
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700">Surname</label>
@@ -124,6 +114,7 @@ const EditClientProfile = () => {
             {...register("surname")}
             className="w-full border p-2 rounded"
           />
+          {errors.surname && <p className="text-red-600 text-sm">{errors.surname.message}</p>}
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700">Email</label>
@@ -146,7 +137,8 @@ const EditClientProfile = () => {
             {...register("phoneNumber", {
               pattern: {
                 value: /^\+370\d{8}$/,
-                message: "Phone number must start with +370 followed by 8 digits (e.g., +37062345678)",
+                message:
+                  "Phone number must start with +370 followed by 8 digits (e.g., +37062345678)",
               },
             })}
             className="w-full border p-2 rounded"
@@ -155,21 +147,27 @@ const EditClientProfile = () => {
             <p className="text-red-600 text-sm">{errors.phoneNumber.message}</p>
           )}
         </div>
+
         <div>
           <label className="block text-sm font-medium text-gray-700">New Password</label>
           <input
             type="password"
-            {...register("password")}
+            {...register("password", {
+              validate: (value) =>
+                value === "" || value.length >= 6 || "Password must be at least 6 characters",
+            })}
             className="w-full border p-2 rounded"
           />
+          {errors.password && <p className="text-red-600 text-sm">{errors.password.message}</p>}
         </div>
+
         <div>
-          <label className="block text-sm font-medium text-gray-700">Confirm Password</label>
+          <label className="block text-sm font-medium text-gray-700">Confirm New Password</label>
           <input
             type="password"
             {...register("confirmPassword", {
-              validate: value =>
-                !watch("password") || value === watch("password") || "Passwords do not match",
+              validate: (value) =>
+                value === password || "Passwords do not match",
             })}
             className="w-full border p-2 rounded"
           />
@@ -177,6 +175,7 @@ const EditClientProfile = () => {
             <p className="text-red-600 text-sm">{errors.confirmPassword.message}</p>
           )}
         </div>
+
         <div>
           <label className="block text-sm font-medium text-gray-700">Username</label>
           <input
@@ -186,6 +185,7 @@ const EditClientProfile = () => {
             className="w-full border p-2 rounded bg-gray-100 text-gray-500"
           />
         </div>
+
         <div className="flex justify-between mt-4">
           <button
             type="submit"
