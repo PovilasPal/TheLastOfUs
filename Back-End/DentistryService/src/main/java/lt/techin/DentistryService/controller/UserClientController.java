@@ -75,7 +75,7 @@ public class UserClientController {
             .body(UserClientMapper.toClientDTO(savedUserClient));
 
   }
-  
+
   @DeleteMapping("/users_clients/{id}")
   public ResponseEntity<Void> deleteUserClient(@PathVariable long id) {
 
@@ -100,28 +100,21 @@ public class UserClientController {
     if (findUserClient.isPresent()) {
       UserClient updateUserClient = findUserClient.get();
 
-      // Check if username exists and belongs to another user
-      boolean usernameTaken = userClientService.existsUserClientByUsername(userClientRequestDTO.username());
-      if (usernameTaken && !updateUserClient.getUsername().equals(userClientRequestDTO.username())) {
-        return ResponseEntity.badRequest().body("This username already exists");
-      }
-
       updateUserClient.setName(userClientRequestDTO.name());
       updateUserClient.setSurname(userClientRequestDTO.surname());
       updateUserClient.setEmail(userClientRequestDTO.email());
       updateUserClient.setPhoneNumber(userClientRequestDTO.phoneNumber());
       updateUserClient.setUsername(userClientRequestDTO.username());
 
-      if (userClientRequestDTO.password() != null && !userClientRequestDTO.password().isBlank()) {
-        updateUserClient.setPassword(passwordEncoder.encode(userClientRequestDTO.password()));
-      }
+//      if (userClientRequestDTO.password() != null && !userClientRequestDTO.password().isBlank()) {
+//        updateUserClient.setPassword(passwordEncoder.encode(userClientRequestDTO.password()));
+//      }
 
       UserClient saved = this.userClientService.saveUserClient(updateUserClient);
 
       return ResponseEntity.ok(UserClientMapper.toClientDTO(saved));
     }
 
-    // If user not found, create new user (optional, depends on your logic)
     UserClient newUserClient = this.userClientService.saveUserClient(UserClientMapper.toUserClient(userClientRequestDTO));
 
     return ResponseEntity.created(
@@ -131,5 +124,4 @@ public class UserClientController {
                     .toUri()
     ).body(UserClientMapper.toClientDTO(newUserClient));
   }
-
 }

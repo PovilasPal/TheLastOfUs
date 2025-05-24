@@ -18,7 +18,6 @@ const EditClientProfile = () => {
     formState: { errors },
   } = useForm();
 
-  // Stebim password ir confirmPassword laukus
   const password = watch("password", "");
   const confirmPassword = watch("confirmPassword", "");
 
@@ -41,8 +40,6 @@ const EditClientProfile = () => {
           "email",
           "phoneNumber",
           "username",
-          // Nesvarbu įkelti slaptažodį į formą, dažnai to nedarome,
-          // bet jei nori, gali pridėti. Aš neįkelsiu slaptažodžio.
         ];
         fields.forEach((field) => setValue(field, response.data[field]));
       } catch (error) {
@@ -55,19 +52,16 @@ const EditClientProfile = () => {
   }, [user, setValue]);
 
   const onSubmit = async (formData) => {
-    // Pašalinam confirmPassword iš siuntimo
     const { confirmPassword, ...sendData } = formData;
-
-    // Jei password tuščias, pašalinam jį iš siuntimo, kad nesikeistų
     if (!sendData.password) {
       delete sendData.password;
     }
 
     try {
-      await axios.put(
-        `http://localhost:8081/users_clients/${user.id}`,
-        { ...sendData, roles: user.roles }
-      );
+      await axios.put(`http://localhost:8081/users_clients/${user.id}`, {
+        ...sendData,
+        roles: user.roles,
+      });
       alert("Profile updated successfully!");
       navigate("/");
     } catch (err) {
@@ -79,9 +73,7 @@ const EditClientProfile = () => {
   const handleDelete = async () => {
     if (window.confirm("Are you sure you want to delete your account?")) {
       try {
-        await axios.delete(
-          `http://localhost:8081/users_clients/${user.id}`
-        );
+        await axios.delete(`http://localhost:8081/users_clients/${user.id}`);
         logout();
         navigate("/");
       } catch (err) {
@@ -99,28 +91,45 @@ const EditClientProfile = () => {
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700">Name</label>
+          <label className="block text-sm font-medium text-gray-700">
+            Name
+          </label>
           <input
             type="text"
-            {...register("name")}
+            {...register("name", {
+              required: "Name is required",
+            })}
             className="w-full border p-2 rounded"
           />
-          {errors.name && <p className="text-red-600 text-sm">{errors.name.message}</p>}
+          {errors.name && (
+            <p className="text-red-600 text-sm">{errors.name.message}</p>
+          )}
         </div>
+
         <div>
-          <label className="block text-sm font-medium text-gray-700">Surname</label>
+          <label className="block text-sm font-medium text-gray-700">
+            Surname
+          </label>
           <input
             type="text"
-            {...register("surname")}
+            {...register("surname", {
+              required: "Surname is required",
+            })}
             className="w-full border p-2 rounded"
           />
-          {errors.surname && <p className="text-red-600 text-sm">{errors.surname.message}</p>}
+          {errors.surname && (
+            <p className="text-red-600 text-sm">{errors.surname.message}</p>
+          )}
         </div>
+
         <div>
-          <label className="block text-sm font-medium text-gray-700">Email</label>
+          <label className="block text-sm font-medium text-gray-700">
+            Email
+          </label>
           <input
             type="email"
             {...register("email", {
+              required: "Email is required",
               pattern: {
                 value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
                 message: "Invalid email address",
@@ -128,13 +137,19 @@ const EditClientProfile = () => {
             })}
             className="w-full border p-2 rounded"
           />
-          {errors.email && <p className="text-red-600 text-sm">{errors.email.message}</p>}
+          {errors.email && (
+            <p className="text-red-600 text-sm">{errors.email.message}</p>
+          )}
         </div>
+
         <div>
-          <label className="block text-sm font-medium text-gray-700">Phone Number</label>
+          <label className="block text-sm font-medium text-gray-700">
+            Phone Number
+          </label>
           <input
             type="tel"
             {...register("phoneNumber", {
+              required: "Phone number is required",
               pattern: {
                 value: /^\+370\d{8}$/,
                 message:
@@ -149,20 +164,28 @@ const EditClientProfile = () => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">New Password</label>
+          <label className="block text-sm font-medium text-gray-700">
+           Current or New Password
+          </label>
           <input
             type="password"
             {...register("password", {
               validate: (value) =>
-                value === "" || value.length >= 6 || "Password must be at least 6 characters",
+                value === "" ||
+                value.length >= 6 ||
+                "Password must be at least 6 characters",
             })}
             className="w-full border p-2 rounded"
           />
-          {errors.password && <p className="text-red-600 text-sm">{errors.password.message}</p>}
+          {errors.password && (
+            <p className="text-red-600 text-sm">{errors.password.message}</p>
+          )}
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">Confirm New Password</label>
+          <label className="block text-sm font-medium text-gray-700">
+            Confirm Password
+          </label>
           <input
             type="password"
             {...register("confirmPassword", {
@@ -172,20 +195,28 @@ const EditClientProfile = () => {
             className="w-full border p-2 rounded"
           />
           {errors.confirmPassword && (
-            <p className="text-red-600 text-sm">{errors.confirmPassword.message}</p>
+            <p className="text-red-600 text-sm">
+              {errors.confirmPassword.message}
+            </p>
           )}
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700">Username</label>
+          <label className="block text-sm font-medium text-gray-700">
+            Username
+          </label>
           <input
             type="text"
-            {...register("username")}
+            {...register("username", {
+              required: "Username is required",
+            })}
             readOnly
             className="w-full border p-2 rounded bg-gray-100 text-gray-500"
           />
+          {errors.username && (
+            <p className="text-red-600 text-sm">{errors.username.message}</p>
+          )}
         </div>
-
         <div className="flex justify-between mt-4">
           <button
             type="submit"
