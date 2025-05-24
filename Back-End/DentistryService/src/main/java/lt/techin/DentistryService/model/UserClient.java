@@ -8,75 +8,43 @@ import java.util.Collection;
 import java.util.List;
 
 @Entity
-@Table(name = "users_providers")
-public class UserProvider implements UserDetails {
+@Table(name = "users_clients")
+public class UserClient implements UserDetails {
 
   @Id
-  private String licenseNumber;
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private long id;
 
   private String name;
+  private String surname;
   private String email;
   private String phoneNumber;
-  private String description;
-  private String address;
-  private String contacts;
   private String username;
   private String password;
 
   @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(
-          name = "providers_roles",
-          joinColumns = @JoinColumn(name = "user_license_number"),
+          name = "users_roles",
+          joinColumns = @JoinColumn(name = "user_id"),
           inverseJoinColumns = @JoinColumn(name = "role_id")
   )
   private List<Role> roles;
 
-  public UserProvider(String licenseNumber, String name, String email, String phoneNumber, String description, String address, String contacts, String username, String password, List<Role> roles) {
-    this.licenseNumber = licenseNumber;
+  public UserClient(String name, String surname, String email, String phoneNumber, String username, String password, List<Role> roles) {
     this.name = name;
+    this.surname = surname;
     this.email = email;
     this.phoneNumber = phoneNumber;
-    this.description = description;
-    this.address = address;
-    this.contacts = contacts;
     this.username = username;
     this.password = password;
     this.roles = roles;
   }
 
-  public UserProvider() {
+  public UserClient() {
   }
 
-  public String getLicenseNumber() {
-    return licenseNumber;
-  }
-
-  public String getDescription() {
-    return description;
-  }
-
-  public void setDescription(String description) {
-    this.description = description;
-  }
-
-  public String getAddress() {
-    return address;
-  }
-
-  public void setAddress(String address) {
-    this.address = address;
-  }
-
-  public String getContacts() {
-    return contacts;
-  }
-
-  public void setContacts(String contacts) {
-    this.contacts = contacts;
-  }
-
-  public void setLicenseNumber(String licenseNumber) {
-    this.licenseNumber = licenseNumber;
+  public long getId() {
+    return id;
   }
 
   public String getName() {
@@ -85,6 +53,14 @@ public class UserProvider implements UserDetails {
 
   public void setName(String name) {
     this.name = name;
+  }
+
+  public String getSurname() {
+    return surname;
+  }
+
+  public void setSurname(String surname) {
+    this.surname = surname;
   }
 
   public String getEmail() {
