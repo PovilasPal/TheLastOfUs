@@ -47,6 +47,7 @@ public class UserClientMapper {
 
   public static UserLoginResponseDTO toLoginClientResponseDTO(UserClient userClient) {
     return new UserLoginResponseDTO(
+            userClient.getId(),
             userClient.getUsername(),
             userClient.getRoles()
                     .stream()

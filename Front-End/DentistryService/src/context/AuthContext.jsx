@@ -31,9 +31,10 @@ export const AuthProvider = ({ children }) => {
     }
 
     const user = {
+      id: userData.id || null,
       username,
       password,
-      licenseNumber : userData.licenseNumber,
+      licenseNumber : userData.licenseNumber || null,
       roles: userData.roles,
       endpoints
     };
