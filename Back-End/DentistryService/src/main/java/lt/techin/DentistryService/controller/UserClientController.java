@@ -106,9 +106,9 @@ public class UserClientController {
       updateUserClient.setPhoneNumber(userClientRequestDTO.phoneNumber());
       updateUserClient.setUsername(userClientRequestDTO.username());
 
-//      if (userClientRequestDTO.password() != null && !userClientRequestDTO.password().isBlank()) {
-//        updateUserClient.setPassword(passwordEncoder.encode(userClientRequestDTO.password()));
-//      }
+      if (userClientRequestDTO.password() != null && !userClientRequestDTO.password().isBlank()) {
+        updateUserClient.setPassword(passwordEncoder.encode(userClientRequestDTO.password()));
+      }
 
       UserClient saved = this.userClientService.saveUserClient(updateUserClient);
 
