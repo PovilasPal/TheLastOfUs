@@ -8,9 +8,27 @@ import { useAuth } from '../context/AuthContext.jsx';
 
 // Validation schema
 const schema = yup.object().shape({
-  licenseNumber: yup.string().required('License number is required'),
-  name: yup.string().required('Name is required'),
-  lastName: yup.string().required('Last name is required'),
+  licenseNumber: yup
+  .string()
+  .required('License number is required')
+  .matches(
+      /^[A-Z]{3}[0-9]{5}$/,
+      'License number must be 3 uppercase letters followed by 5 digits'
+    ),
+  name: yup
+  .string()
+  .required('Name is required')
+  .min(2, 'Name must be at least 2 characters')
+  .max(50, 'Name cannot be longer than 50 characters')
+    .matches(
+      /^[A-Za-zÀ-ÖØ-öø-ÿ\s-]+$/,
+      'Name can only contain letters, spaces and hyphens'
+    ),
+  lastName: yup
+  .string()
+  .required('Last name is required')
+  .min(2, 'Name must be at least 2 characters')
+  .max(50, 'Name cannot be longer than 50 characters'),
   qualification: yup.string().required('Qualification is required'),
   treatmentIds: yup.array().min(1, 'Select at least one treatment'),
 });
