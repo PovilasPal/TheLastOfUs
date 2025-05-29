@@ -12,6 +12,7 @@ import java.util.List;
 public class UserProvider implements UserDetails {
 
   @Id
+  @Column(name = "license_number")
   private String licenseNumber;
 
   private String name;
@@ -31,7 +32,15 @@ public class UserProvider implements UserDetails {
   )
   private List<Role> roles;
 
-  public UserProvider(String licenseNumber, String name, String email, String phoneNumber, String description, String address, String contacts, String username, String password, List<Role> roles) {
+  @ManyToMany(fetch = FetchType.EAGER)
+  @JoinTable(
+          name = "providers_treatments",
+          joinColumns = @JoinColumn(name = "license_number"),
+          inverseJoinColumns = @JoinColumn(name = "treatment_id")
+  )
+  private List<Treatment> treatments;
+
+  public UserProvider(String licenseNumber, String name, String email, String phoneNumber, String description, String address, String contacts, String username, String password, List<Role> roles, List<Treatment> treatments) {
     this.licenseNumber = licenseNumber;
     this.name = name;
     this.email = email;
@@ -42,6 +51,7 @@ public class UserProvider implements UserDetails {
     this.username = username;
     this.password = password;
     this.roles = roles;
+    this.treatments = treatments;
   }
 
   public UserProvider() {
@@ -132,5 +142,13 @@ public class UserProvider implements UserDetails {
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
     return this.roles;
+  }
+
+  public List<Treatment> getTreatments() {
+    return treatments;
+  }
+
+  public void setTreatments(List<Treatment> treatments) {
+    this.treatments = treatments;
   }
 }

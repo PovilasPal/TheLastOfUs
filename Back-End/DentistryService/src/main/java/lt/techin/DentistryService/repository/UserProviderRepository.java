@@ -1,5 +1,6 @@
 package lt.techin.DentistryService.repository;
 
+import lt.techin.DentistryService.model.Treatment;
 import lt.techin.DentistryService.model.UserProvider;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -11,6 +12,7 @@ import java.util.Optional;
 public interface UserProviderRepository extends JpaRepository<UserProvider, String> {
   Optional<UserProvider> findByUsername(String username);
 
+  List<UserProvider> findAllByTreatmentsContaining(Treatment treatment);
 
   boolean existsByLicenseNumber(String licenseNumber);
 

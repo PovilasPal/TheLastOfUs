@@ -18,20 +18,28 @@ const Navigation = () => {
             </span>
 
             {user.roles?.includes("ROLE_PROVIDER") && (
-              <Link to="/provider/profile">
-                <button className="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded text-white text-sm transition">
-                  Edit Profile
-                </button>
-              </Link>
-            )}
-              <Link to="/provider/employees">
-                <button className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded text-white text-sm transition">
-                  Employee Manager
-               </button>
-            </Link>
-      
+              <>
+                <Link to="/provider/profile">
+                  <button className="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded text-white text-sm transition">
+                    Edit Profile
+                  </button>
+                </Link>
 
-                        {user.roles?.includes("ROLE_USER") && (
+                <Link to="/provider/employees">
+                  <button className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded text-white text-sm transition">
+                    Employee Manager
+                  </button>
+                </Link>
+
+                <Link to="/provider/treatments">
+                  <button className="bg-purple-500 hover:bg-purple-600 px-4 py-2 rounded text-white text-sm transition">
+                    Treatments
+                  </button>
+                </Link>
+              </>
+            )}
+
+            {user.roles?.includes("ROLE_USER") && (
               <Link to="/client/profile">
                 <button className="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded text-white text-sm transition">
                   Edit Profile

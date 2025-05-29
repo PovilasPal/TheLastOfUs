@@ -19,7 +19,8 @@ public class UserProviderMapper {
             userProviderRequestDTO.contacts(),
             userProviderRequestDTO.username(),
             userProviderRequestDTO.password(),
-            userProviderRequestDTO.roles()
+            userProviderRequestDTO.roles(),
+            userProviderRequestDTO.treatments()
     );
   }
 
@@ -33,7 +34,8 @@ public class UserProviderMapper {
             userProvider.getAddress(),
             userProvider.getContacts(),
             userProvider.getUsername(),
-            userProvider.getRoles()
+            userProvider.getRoles(),
+            userProvider.getTreatments()
     );
   }
 
@@ -48,7 +50,8 @@ public class UserProviderMapper {
                     u.getAddress(),
                     u.getContacts(),
                     u.getUsername(),
-                    u.getRoles()))
+                    u.getRoles(),
+                    u.getTreatments()))
             .toList();
   }
 
