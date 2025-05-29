@@ -4,6 +4,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import api from '../api/api.js';
 import Select from 'react-select';
+import { useAuth } from '../context/AuthContext.jsx';
 
 // Validation schema
 const schema = yup.object().shape({
@@ -33,6 +34,9 @@ const schema = yup.object().shape({
 });
 
 export default function EmployeeManager() {
+  const { user } = useAuth();
+  const licenseNumber = user?.licenseNumber;
+
   const [employees, setEmployees] = useState([]);
   const [treatments, setTreatments] = useState([]);
   const [editingLicenseNumber, setEditingLicenseNumber] = useState(null);
@@ -59,7 +63,7 @@ export default function EmployeeManager() {
   useEffect(() => {
     fetchEmployees();
     fetchTreatments();
-  }, []);
+  }, [licenseNumber]);
 
   const fetchEmployees = async () => {
     try {
@@ -71,10 +75,11 @@ export default function EmployeeManager() {
   };
 
   const fetchTreatments = async () => {
+    if (!licenseNumber) return;
     try {
-      const res = await api.get('/api/provider/employees/treatments');
-      setTreatments(res.data);
-    } catch {
+      const res = await api.get(`/api/providers/${licenseNumber}`);
+      setTreatments(res.data.treatments || []);
+    } catch (err) {
       setError('Failed to fetch treatments');
       setTreatments([]);
     }
@@ -105,7 +110,9 @@ export default function EmployeeManager() {
       name: employee.name,
       lastName: employee.lastName,
       qualification: employee.qualification,
-      treatmentIds: employee.treatments.map((t) => (typeof t === 'string' ? Number(t) : t.id)),
+      treatmentIds: employee.treatments.map((t) =>
+        typeof t === 'string' ? Number(t) : t.id
+      ),
     });
     setEditingLicenseNumber(employee.licenseNumber);
     setError(null);
@@ -140,58 +147,59 @@ export default function EmployeeManager() {
       <h1 className="text-3xl font-bold mb-6">Employee Management</h1>
 
       {error && <div className="mb-4 text-red-600 font-semibold">{error}</div>}
-<ul className="mb-8 space-y-4">
-  {employees.map((emp) => (
-    <li
-      key={emp.licenseNumber}
-      className="p-4 border rounded shadow-sm flex flex-col md:flex-row md:items-center md:justify-between"
-    >
-      <div>
-        <p className="font-semibold text-lg">
-          {emp.name} {emp.lastName}
-        </p>
-        <p className="text-gray-600">{emp.qualification}</p>
-        <p className="text-gray-700 mt-1">
-          Treatments:{' '}
-          {emp.treatments
-            .map((t) => (typeof t === 'string' ? t : t.name))
-            .join(', ')}
-        </p>
-        {/* Appointments */}
-        <p className="text-gray-700 mt-1">
-          Appointments:{' '}
-          {emp.appointments && emp.appointments.length > 0 ? (
-            <ul className="list-disc ml-5">
-              {emp.appointments.map((appt, idx) => (
-                <li key={idx}>
-                  {appt.date} {appt.startTime} - {appt.endTime}
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <span className="italic text-gray-500">No appointments</span>
-          )}
-        </p>
-      </div>
-      <div className="mt-4 md:mt-0 flex space-x-3">
-        <button
-          onClick={() => handleEdit(emp)}
-          disabled={loading}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition"
-        >
-          Edit
-        </button>
-        <button
-          onClick={() => handleDelete(emp.licenseNumber)}
-          disabled={loading}
-          className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded transition"
-        >
-          Delete
-        </button>
-      </div>
-    </li>
-  ))}
-</ul>
+
+      <ul className="mb-8 space-y-4">
+        {employees.map((emp) => (
+          <li
+            key={emp.licenseNumber}
+            className="p-4 border rounded shadow-sm flex flex-col md:flex-row md:items-center md:justify-between"
+          >
+            <div>
+              <p className="font-semibold text-lg">
+                {emp.name} {emp.lastName}
+              </p>
+              <p className="text-gray-600">{emp.qualification}</p>
+              <p className="text-gray-700 mt-1">
+                Treatments:{' '}
+                {emp.treatments
+                  .map((t) => (typeof t === 'string' ? t : t.name))
+                  .join(', ')}
+              </p>
+              <p className="text-gray-700 mt-1">
+                Appointments:{' '}
+                {emp.appointments && emp.appointments.length > 0 ? (
+                  <ul className="list-disc ml-5">
+                    {emp.appointments.map((appt, idx) => (
+                      <li key={idx}>
+                        {appt.date} {appt.startTime} - {appt.endTime}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <span className="italic text-gray-500">No appointments</span>
+                )}
+              </p>
+            </div>
+            <div className="mt-4 md:mt-0 flex space-x-3">
+              <button
+                onClick={() => handleEdit(emp)}
+                disabled={loading}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition"
+              >
+                Edit
+              </button>
+              <button
+                onClick={() => handleDelete(emp.licenseNumber)}
+                disabled={loading}
+                className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded transition"
+              >
+                Delete
+              </button>
+            </div>
+          </li>
+        ))}
+      </ul>
+
       {/* Employee Form */}
       <h2 className="text-2xl font-semibold mb-4">
         {editingLicenseNumber ? 'Edit Employee' : 'Add New Employee'}
@@ -213,9 +221,7 @@ export default function EmployeeManager() {
             }`}
           />
           {errors.licenseNumber && (
-            <p className="text-red-500 mt-1 text-sm">
-              {errors.licenseNumber.message}
-            </p>
+            <p className="text-red-500 mt-1 text-sm">{errors.licenseNumber.message}</p>
           )}
         </div>
 
@@ -272,63 +278,48 @@ export default function EmployeeManager() {
             }`}
           />
           {errors.qualification && (
-            <p className="text-red-500 mt-1 text-sm">
-              {errors.qualification.message}
-            </p>
+            <p className="text-red-500 mt-1 text-sm">{errors.qualification.message}</p>
           )}
         </div>
 
         {/* Treatments Multi-select */}
-       
-<Controller
-  name="treatmentIds"
-  control={control}
-  render={({ field }) => (
-    <Select
-      {...field}
-      isMulti
-      options={treatments.map(t => ({
-        value: t.id,
-        label: t.name
-      }))}
-      value={treatments
-        .filter(t => field.value.includes(t.id))
-        .map(t => ({ value: t.id, label: t.name }))}
-      onChange={selected => {
-        field.onChange(selected ? selected.map(option => option.value) : []);
-      }}
-      className="react-select-container"
-      classNamePrefix="react-select"
-      placeholder="Select treatments"
-    />
-  )}
-/>
-        {/* Buttons */}
-        <div className="flex items-center space-x-4">
+        <Controller
+          name="treatmentIds"
+          control={control}
+          render={({ field }) => (
+            <div>
+              <label className="block mb-1 font-medium">Treatments</label>
+              <Select
+                isMulti
+                options={treatments.map((t) => ({ value: t.id, label: t.name }))}
+                value={treatments
+                  .filter((t) => field.value?.includes(t.id))
+                  .map((t) => ({ value: t.id, label: t.name }))}
+                onChange={(selected) =>
+                  field.onChange(selected.map((s) => s.value))
+                }
+              />
+              {errors.treatmentIds && (
+                <p className="text-red-500 mt-1 text-sm">{errors.treatmentIds.message}</p>
+              )}
+            </div>
+          )}
+        />
+
+        {/* Submit + Cancel */}
+        <div className="flex gap-3">
           <button
             type="submit"
-            disabled={isSubmitting || loading}
-            className={`px-6 py-2 rounded text-white transition ${
-              isSubmitting || loading
-                ? 'bg-gray-400 cursor-not-allowed'
-                : 'bg-blue-600 hover:bg-blue-700'
-            }`}
+            disabled={isSubmitting}
+            className="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded transition"
           >
-            {isSubmitting || loading
-              ? editingLicenseNumber
-                ? 'Updating...'
-                : 'Saving...'
-              : editingLicenseNumber
-              ? 'Update Employee'
-              : 'Add Employee'}
+            {editingLicenseNumber ? 'Update' : 'Add'} Employee
           </button>
-
           {editingLicenseNumber && (
             <button
               type="button"
               onClick={handleCancelEdit}
-              disabled={isSubmitting || loading}
-              className="px-6 py-2 rounded bg-gray-300 hover:bg-gray-400 text-gray-800 transition"
+              className="bg-gray-500 hover:bg-gray-600 text-white px-5 py-2 rounded transition"
             >
               Cancel
             </button>
@@ -338,5 +329,3 @@ export default function EmployeeManager() {
     </div>
   );
 }
-
-

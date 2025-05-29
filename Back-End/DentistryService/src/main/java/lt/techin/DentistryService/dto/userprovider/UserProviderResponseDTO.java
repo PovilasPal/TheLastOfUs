@@ -1,6 +1,7 @@
 package lt.techin.DentistryService.dto.userprovider;
 
 import lt.techin.DentistryService.model.Role;
+import lt.techin.DentistryService.model.Treatment;
 
 import java.util.List;
 
@@ -13,7 +14,9 @@ public record UserProviderResponseDTO(
         String address,
         String contacts,
         String username,
-        List<Role> roles) {
+        List<Role> roles,
+        List<Treatment> treatments
+) {
 }
 
 

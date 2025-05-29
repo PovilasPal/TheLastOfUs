@@ -132,4 +132,13 @@ public class UserProviderController {
     return ResponseEntity.noContent().build();
   }
 
+  @PutMapping("/providers/{licenseNumber}/treatments")
+  public ResponseEntity<Void> updateProviderTreatments(
+          @PathVariable String licenseNumber,
+          @RequestBody List<Long> treatmentIds) {
+
+    userProviderService.updateProviderTreatments(licenseNumber, treatmentIds);
+    return ResponseEntity.noContent().build();
+  }
+
 }
